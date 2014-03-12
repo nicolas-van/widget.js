@@ -1,0 +1,29 @@
+{
+  "name": "spear",
+  "version": "0.3.0",
+  "description": "Spear.js Framework",
+  "main": "spear.js",
+  "author": "Nicolas Vanhoren",
+  "keywords": [
+    "spear",
+    "framework"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nicolas-van/spear.js.git"
+  },
+  "dependencies": {
+    "underscore": ">=1.5.2",
+    "ring": ">=2.0.0",
+    "jquery": ">=1.9.0"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-compress": ">=0.5.2",
+    "grunt-mocha": "~0.4.1",
+    "grunt-mocha-test": "~0.7.0",
+    "mocha": "~1.14.0",
+    "jsdom": "~0.8.8"
+  }
+}
