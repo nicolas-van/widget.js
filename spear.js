@@ -355,6 +355,7 @@ function declare(document, $, _, ring) {
          * Destroys the current widget, also destroys all its children before destroying itself.
          */
         destroy: function() {
+            this.trigger("destroying");
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
@@ -409,12 +410,16 @@ function declare(document, $, _, ring) {
                 return;
             this.__widgetAppended = inHtml;
             this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
-            this.$("*").filter(function() { return !! $(this).data("spearWidget"); }).each(function() {
+            this.$("*").filter(function() { return spear.getWidget($(this)); }).each(function() {
                 $(this).data("spearWidget").__widgetAppended = inHtml;
                 $(this).data("spearWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
         },
     });
+    
+    spear.getWidget = function(element) {
+        return element.data("spearWidget") || null;
+    };
 
     return spear;
 }
