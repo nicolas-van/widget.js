@@ -26,11 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (function() {
 "use strict";
 
-if (typeof(define) !== "undefined") { // requirejs
-    define(["jquery", "underscore", "ring"], function() {
-        declare.call(null, [window.document].concat(arguments));
-    });
-} else if (typeof(exports) !== "undefined") { // node
+if (typeof(exports) !== "undefined") { // node
     module.exports = function(w) {
         if (! w.document) {
             throw new Error( "Spear.js requires a window with a document" );
@@ -223,29 +219,20 @@ function declare(document, $, _, ring) {
         constructor: function(parent) {
             this.$super(parent);
             this.__edispatcherEvents = new spear.internal.Events();
-            this.__edispatcherRegisteredEvents = [];
         },
-        on: function(events, dest, func) {
+        on: function(events, func, context) {
             var self = this;
             events = events.split(/\s+/);
             _.each(events, function(eventName) {
-                self.__edispatcherEvents.on(eventName, func, dest);
-                if (dest && dest.__eventDispatcherMixin) {
-                    dest.__edispatcherRegisteredEvents.push({name: eventName, func: func, source: self});
-                }
+                self.__edispatcherEvents.on(eventName, func, context);
             });
             return this;
         },
-        off: function(events, dest, func) {
+        off: function(events, func, context) {
             var self = this;
             events = events.split(/\s+/);
             _.each(events, function(eventName) {
-                self.__edispatcherEvents.off(eventName, func, dest);
-                if (dest && dest.__eventDispatcherMixin) {
-                    dest.__edispatcherRegisteredEvents = _.filter(dest.__edispatcherRegisteredEvents, function(el) {
-                        return !(el.name === eventName && el.func === func && el.source === self);
-                    });
-                }
+                self.__edispatcherEvents.off(eventName, func, context);
             });
             return this;
         },
@@ -254,14 +241,6 @@ function declare(document, $, _, ring) {
             return this;
         },
         destroy: function() {
-            var self = this;
-            _.each(this.__edispatcherRegisteredEvents, function(event) {
-                event.source.__edispatcherEvents.off(event.name, event.func, self);
-            });
-            this.__edispatcherRegisteredEvents = [];
-            _.each(this.__edispatcherEvents.callbackList(), function(cal) {
-                this.off(cal[0], cal[2], cal[1]);
-            }, this);
             this.__edispatcherEvents.off();
             this.$super();
         }

@@ -54,47 +54,21 @@ suite("EventDispatcher");
 
 test("base", function() {
     var x = new spear.EventDispatcher();
-    var y = new spear.EventDispatcher();
     var tmp = 0;
     var fct = function() {tmp = 1;};
-    x.on("test", y, fct);
+    x.on("test", fct);
     assert.equal(tmp, 0);
     x.trigger("test");
     assert.equal(tmp, 1);
     tmp = 0;
-    x.off("test", y, fct);
+    x.off("test", fct);
     x.trigger("test");
     assert.equal(tmp, 0);
     tmp = 0;
-    x.on("test", y, fct);
-    y.destroy();
+    x.on("test", fct);
+    x.destroy();
     x.trigger("test");
     assert.equal(tmp, 0);
-});
-test("memoryLeak", function() {
-    var x = new spear.EventDispatcher();
-    var y = new spear.EventDispatcher();
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 0);
-    var fct = function() {};
-    x.on("test", y, fct);
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 1);
-    y.destroy();
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 0);
-
-    x = new spear.EventDispatcher();
-    y = new spear.EventDispatcher();
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 0);
-    fct = function() {};
-    x.on("test", y, fct);
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 1);
-    x.destroy();
-    assert.equal(x.__edispatcherRegisteredEvents.length, 0);
-    assert.equal(y.__edispatcherRegisteredEvents.length, 0);
 });
 
 suite("Properties");
@@ -150,11 +124,10 @@ suite("DynamicProperties");
 
 test("base", function() {
     var x = new spear.DynamicProperties();
-    var y = new spear.DynamicProperties();
     x.set({test: 1});
     assert.equal(x.get("test"), 1);
     var tmp = 0;
-    x.on("change:test", y, function(model, options) {
+    x.on("change:test", function(model, options) {
         tmp = 1;
         assert.equal(options.oldValue, 1);
         assert.equal(options.newValue, 2);
@@ -169,8 +142,8 @@ test("change event only when changed", function() {
     var x = new spear.DynamicProperties();
     var exec1 = false;
     var exec2 = false;
-    x.on("change:test", null, function() {exec1 = true;});
-    x.on("change", null, function() {exec2 = true;});
+    x.on("change:test", function() {exec1 = true;});
+    x.on("change", function() {exec2 = true;});
     x.set({"test": 3});
     assert.equal(exec1, true);
     assert.equal(exec2, true);
