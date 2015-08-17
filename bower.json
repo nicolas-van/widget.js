@@ -7,9 +7,9 @@
     "bower_components"
   ],
   "dependencies": {
-    "underscore": ">=1.5.2",
-    "jquery": ">=1.9.0",
-    "ring": ">=2.0.0"
+    "underscore": ">=1.8.3",
+    "jquery": ">=1.11.3",
+    "ring": ">=2.0.2"
   },
   "devDependencies": {
     "mocha": "1.12",
