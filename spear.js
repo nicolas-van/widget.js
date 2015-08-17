@@ -215,7 +215,6 @@ function declare(document, $, _, ring) {
     // end of Backbone's events class
     
     spear.EventDispatcher = ring.create([spear.Parented], {
-        __eventDispatcherStaticEvents: [],
         events: {},
         classInit: function(proto) {
             var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("events").compact()
@@ -338,6 +337,16 @@ function declare(document, $, _, ring) {
         className: '',
         attributes: {},
         domEvents: {},
+        classInit: function(proto) {
+            var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("domEvents").compact()
+                .reverse().value();
+            proto.__widgetStaticEvents = [];
+            _.each(eventsDicts, function(dct) {
+                _.each(dct, function(val, key) {
+                    proto.__widgetStaticEvents.push([key, val]);
+                });
+            });
+        },
         constructor: function(parent) {
             this.$super(parent);
             this.__widgetElement = $("<" + this.tagName + ">");
@@ -345,7 +354,9 @@ function declare(document, $, _, ring) {
             _.each(this.attributes, function(val, key) {
                 this.$().attr(key, val);
             }, this);
-            _.each(this.domEvents, function(val, key) {
+            _.each(this.__widgetStaticEvents, function(el) {
+                var key = el[0];
+                var val = el[1];
                 key = key.split(" ");
                 val = _.bind(typeof val === "string" ? this[val] : val, this);
                 if (key.length > 1) {
