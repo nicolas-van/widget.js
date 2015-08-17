@@ -215,28 +215,19 @@ function declare(document, $, _, ring) {
     // end of Backbone's events class
     
     spear.EventDispatcher = ring.create([spear.Parented], {
-        __eventDispatcherMixin: true,
         constructor: function(parent) {
             this.$super(parent);
             this.__edispatcherEvents = new spear.internal.Events();
         },
         on: function(events, func, context) {
-            var self = this;
-            events = events.split(/\s+/);
-            _.each(events, function(eventName) {
-                self.__edispatcherEvents.on(eventName, func, context);
-            });
+            this.__edispatcherEvents.on(events, func, context);
             return this;
         },
         off: function(events, func, context) {
-            var self = this;
-            events = events.split(/\s+/);
-            _.each(events, function(eventName) {
-                self.__edispatcherEvents.off(eventName, func, context);
-            });
+            this.__edispatcherEvents.off(events, func, context);
             return this;
         },
-        trigger: function(events) {
+        trigger: function() {
             this.__edispatcherEvents.trigger.apply(this.__edispatcherEvents, arguments);
             return this;
         },
@@ -344,7 +335,7 @@ function declare(document, $, _, ring) {
         tagName: 'div',
         className: '',
         attributes: {},
-        events: {},
+        domEvents: {},
         constructor: function(parent) {
             this.$super(parent);
             this.__widgetElement = $("<" + this.tagName + ">");
@@ -352,7 +343,7 @@ function declare(document, $, _, ring) {
             _.each(this.attributes, function(val, key) {
                 this.$().attr(key, val);
             }, this);
-            _.each(this.events, function(val, key) {
+            _.each(this.domEvents, function(val, key) {
                 key = key.split(" ");
                 val = _.bind(typeof val === "string" ? this[val] : val, this);
                 if (key.length > 1) {

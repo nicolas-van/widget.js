@@ -183,10 +183,10 @@ test("base", function() {
     assert.equal($el.length, 0);
 });
 
-test("events", function() {
+test("domEvents", function() {
     var test = 0;
     var Claz = ring.create([spear.Widget], {
-        events: {
+        domEvents: {
             "testevent": function() {
                 test = 1;
             },
