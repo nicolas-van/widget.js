@@ -71,6 +71,41 @@ test("base", function() {
     assert.equal(tmp, 0);
 });
 
+test("static events", function() {
+    var tmp = 0;
+    var Claz = ring.create(spear.EventDispatcher, {
+        events: {
+            testevent: function() {
+                tmp = 1;
+            },
+        }
+    });
+    var x = new Claz();
+    assert.equal(tmp, 0);
+    x.trigger("testevent");
+    assert.equal(tmp, 1);
+    
+    tmp = 0;
+    var tmp2 = 0;
+    var Claz2 = ring.create(Claz, {
+        events: {
+            testevent2: function() {
+                tmp2 = 1;
+            },
+        }
+    });
+    var y = new Claz2();
+    assert.equal(tmp, 0);
+    assert.equal(tmp2, 0);
+    y.trigger("testevent");
+    assert.equal(tmp, 1);
+    /*assert.equal(tmp2, 0);
+    y.trigger("testevent2");
+    assert.equal(tmp, 1);
+    assert.equal(tmp2, 1);*/
+    
+});
+
 suite("Properties");
 
 test("base", function() {

@@ -215,9 +215,24 @@ function declare(document, $, _, ring) {
     // end of Backbone's events class
     
     spear.EventDispatcher = ring.create([spear.Parented], {
+        __eventDispatcherStaticEvents: [],
+        events: {},
+        classInit: function(proto) {
+            var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("events").compact()
+                .reverse().value();
+            proto.__eventDispatcherStaticEvents = [];
+            _.each(eventsDicts, function(dct) {
+                _.each(dct, function(val, key) {
+                    proto.__eventDispatcherStaticEvents.push([key, val]);
+                });
+            });
+        },
         constructor: function(parent) {
             this.$super(parent);
             this.__edispatcherEvents = new spear.internal.Events();
+            _.each(this.__eventDispatcherStaticEvents, _.bind(function(el) {
+                this.on(el[0], el[1], this);
+            }, this));
         },
         on: function(events, func, context) {
             this.__edispatcherEvents.on(events, func, context);

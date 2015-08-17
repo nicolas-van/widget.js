@@ -9,7 +9,7 @@
   "dependencies": {
     "underscore": ">=1.8.3",
     "jquery": ">=1.11.3",
-    "ring": ">=2.0.2"
+    "ring": ">=2.0.3"
   },
   "devDependencies": {
     "mocha": "1.12",
