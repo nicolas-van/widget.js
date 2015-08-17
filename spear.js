@@ -228,7 +228,7 @@ function declare(document, $, _, ring) {
         }
     });
     
-    spear.Properties = ring.create([spear.EventDispatcher], {
+    spear.Properties = spear.EventDispatcher.$extend({
         classInit: function(proto) {
             var flat = _.extend({}, proto);
             var props = {};
@@ -286,7 +286,7 @@ function declare(document, $, _, ring) {
         }
     });
 
-    spear.DynamicProperties = ring.create([spear.Properties], {
+    spear.DynamicProperties = spear.Properties.$extend({
         constructor: function(parent) {
             this.$super(parent);
             this.__dynamicProperties = {};
@@ -414,7 +414,7 @@ function declare(document, $, _, ring) {
                 $(this).data("spearWidget").__widgetAppended = inHtml;
                 $(this).data("spearWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
-        },
+        }
     });
     
     spear.getWidget = function(element) {

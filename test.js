@@ -89,7 +89,7 @@ test("static events", function() {
         events: {
             testevent: function() {
                 tmp = 1;
-            },
+            }
         }
     });
     var x = new Claz();
@@ -103,7 +103,7 @@ test("static events", function() {
         events: {
             testevent2: function() {
                 tmp2 = 1;
-            },
+            }
         }
     });
     var y = new Claz2();
