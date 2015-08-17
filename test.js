@@ -17,9 +17,9 @@ suite("Destroyable");
 
 test("base", function() {
     var x = new spear.Destroyable();
-    assert.equal(!!x.isDestroyed(), false);
+    assert.equal(!!x.getDestroyed(), false);
     x.destroy();
-    assert.equal(x.isDestroyed(), true);
+    assert.equal(x.getDestroyed(), true);
 });
 
 suite("Parented");
@@ -31,7 +31,7 @@ test("base", function() {
     assert.equal(y.getParent(), x);
     assert.equal(x.getChildren()[0], y);
     x.destroy();
-    assert.equal(y.isDestroyed(), true);
+    assert.equal(y.getDestroyed(), true);
 });
 
 suite("Events");
@@ -66,9 +66,6 @@ test("base", function() {
     assert.equal(tmp, 0);
     tmp = 0;
     x.on("test", fct);
-    x.destroy();
-    x.trigger("test");
-    assert.equal(tmp, 0);
 });
 
 test("context", function() {
@@ -265,6 +262,31 @@ test("domEvents", function() {
     assert.equal(test, 1);
     x.$(".testspan").trigger("testevent2");
     assert.equal(test, 2);
+});
+
+test("appendEvents", function() {
+    var x = new spear.Widget();
+    var y = new spear.Widget();
+    assert.strictEqual(x.__widgetAppended, false);
+    assert.strictEqual(y.__widgetAppended, false);
+    y.appendTo(x.$());
+    assert.strictEqual(x.__widgetAppended, false);
+    assert.strictEqual(y.__widgetAppended, false);
+    x.appendTo($("body"));
+    assert.strictEqual(x.__widgetAppended, true);
+    assert.strictEqual(y.__widgetAppended, true);
+    y.detach();
+    assert.strictEqual(x.__widgetAppended, true);
+    assert.strictEqual(y.__widgetAppended, false);
+    y.appendTo(x.$());
+    assert.strictEqual(x.__widgetAppended, true);
+    assert.strictEqual(y.__widgetAppended, true);
+    x.detach();
+    assert.strictEqual(x.__widgetAppended, false);
+    assert.strictEqual(y.__widgetAppended, false);
+    
+    x.destroy();
+    y.destroy();
 });
 
 })();

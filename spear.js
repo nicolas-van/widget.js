@@ -58,7 +58,7 @@ function declare(document, $, _, ring) {
         /**
          * Returns true if destroy() was called on the current object.
          */
-        isDestroyed : function() {
+        getDestroyed : function() {
             return this.__destroyableDestroyed;
         },
         /**
@@ -246,6 +246,7 @@ function declare(document, $, _, ring) {
             return this;
         },
         destroy: function() {
+            this.trigger("destroyed");
             this.__edispatcherEvents.off();
             this.$super();
         }
@@ -349,11 +350,13 @@ function declare(document, $, _, ring) {
         },
         constructor: function(parent) {
             this.$super(parent);
+            this.__widgetAppended = false;
             this.__widgetElement = $("<" + this.tagName + ">");
             this.$().addClass(this.className);
             _.each(this.attributes, function(val, key) {
                 this.$().attr(key, val);
             }, this);
+            this.$().data("spearWidget", this);
             _.each(this.__widgetStaticEvents, function(el) {
                 var key = el[0];
                 var val = el[1];
@@ -367,6 +370,7 @@ function declare(document, $, _, ring) {
             }, this);
     
             this.setParent(parent);
+            this.$().html(this.render());
         },
         $: function(attr) {
             if (attr)
@@ -384,55 +388,58 @@ function declare(document, $, _, ring) {
             this.$().remove();
             this.$super();
         },
-        /**
-         * Renders the current widget and appends it to the given jQuery object or Widget.
-         *
-         * @param target A jQuery object or a Widget instance.
-         */
         appendTo: function(target) {
             this.$().appendTo(target);
-            return this.render();
+            this.__checkAppended();
+            return this;
         },
-        /**
-         * Renders the current widget and prepends it to the given jQuery object or Widget.
-         *
-         * @param target A jQuery object or a Widget instance.
-         */
         prependTo: function(target) {
             this.$().prependTo(target);
-            return this.render();
+            this.__checkAppended();
+            return this;
         },
-        /**
-         * Renders the current widget and inserts it after to the given jQuery object or Widget.
-         *
-         * @param target A jQuery object or a Widget instance.
-         */
         insertAfter: function(target) {
             this.$().insertAfter(target);
-            return this.render();
+            this.__checkAppended();
+            return this;
         },
-        /**
-         * Renders the current widget and inserts it before to the given jQuery object or Widget.
-         *
-         * @param target A jQuery object or a Widget instance.
-         */
         insertBefore: function(target) {
             this.$().insertBefore(target);
-            return this.render();
+            this.__checkAppended();
+            return this;
         },
-        /**
-         * Renders the current widget and replaces the given jQuery object.
-         *
-         * @param target A jQuery object or a Widget instance.
-         */
         replace: function(target) {
             this.$().replace(target);
-            return this.render();
+            this.__checkAppended();
+            return this;
+        },
+        detach: function() {
+            this.$().detach();
+            this.__checkAppended();
+            return this;
         },
         /**
          * This is the method to implement to render the Widget.
+         *
+         * @returns An html string that will be appended to `this.$()`.
          */
-        render: function() {}
+        render: function() {
+            return "";
+        },
+        getAppendedToDom: function() {
+            return this.__widgetAppended;
+        },
+        __checkAppended: function() {
+            var inHtml = $.contains(document, this.$()[0]);
+            if (this.__widgetAppended === inHtml)
+                return;
+            this.__widgetAppended = inHtml;
+            this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            this.$("*").filter(function() { return !! $(this).data("spearWidget"); }).each(function() {
+                $(this).data("spearWidget").__widgetAppended = inHtml;
+                $(this).data("spearWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            });
+        },
     });
 
     return spear;
