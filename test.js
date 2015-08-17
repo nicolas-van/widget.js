@@ -99,10 +99,10 @@ test("static events", function() {
     assert.equal(tmp2, 0);
     y.trigger("testevent");
     assert.equal(tmp, 1);
-    /*assert.equal(tmp2, 0);
+    assert.equal(tmp2, 0);
     y.trigger("testevent2");
     assert.equal(tmp, 1);
-    assert.equal(tmp2, 1);*/
+    assert.equal(tmp2, 1);
     
 });
 
