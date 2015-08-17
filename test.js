@@ -71,6 +71,22 @@ test("base", function() {
     assert.equal(tmp, 0);
 });
 
+test("context", function() {
+    var x = new spear.EventDispatcher();
+    var tmp = null;
+    x.on("test", function() {
+        tmp = this;
+    });
+    x.trigger("test");
+    assert.strictEqual(tmp, undefined);
+    tmp = null;
+    x.on("test2", function() {
+        tmp = this;
+    }, "test");
+    x.trigger("test2");
+    assert.strictEqual(tmp, "test");
+});
+
 test("static events", function() {
     var tmp = 0;
     var Claz = ring.create(spear.EventDispatcher, {
@@ -103,7 +119,21 @@ test("static events", function() {
     y.trigger("testevent2");
     assert.equal(tmp, 1);
     assert.equal(tmp2, 1);
-    
+});
+
+test("static events context", function() {
+    var tmp = null;
+    var Claz = ring.create(spear.EventDispatcher, {
+        events: {
+            test: "test"
+        },
+        test: function() {
+            tmp = this;
+        }
+    });
+    var x = new Claz();
+    x.trigger("test");
+    assert.strictEqual(tmp, x);
 });
 
 suite("Properties");

@@ -206,7 +206,7 @@ function declare(document, $, _, ring) {
                 tail = node.tail;
                 args = node.event ? [ node.event ].concat(rest) : rest;
                 while ((node = node.next) !== tail) {
-                    node.callback.apply(node.context || this, args);
+                    node.callback.apply(node.context, args);
                 }
             }
             return this;
@@ -230,7 +230,7 @@ function declare(document, $, _, ring) {
             this.$super(parent);
             this.__edispatcherEvents = new spear.internal.Events();
             _.each(this.__eventDispatcherStaticEvents, _.bind(function(el) {
-                this.on(el[0], el[1], this);
+                this.on(el[0], typeof el[1] === "string" ? this[el[1]] : el[1], this);
             }, this));
         },
         on: function(events, func, context) {
