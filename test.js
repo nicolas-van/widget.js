@@ -13,24 +13,23 @@ if (typeof(module) !== "undefined") {
     global.spear = require("./spear")(window);
 }
 
-suite("Destroyable");
+suite("LifeCycle");
 
 test("base", function() {
-    var x = new spear.Destroyable();
+    var x = new spear.LifeCycle();
     assert.equal(!!x.getDestroyed(), false);
     x.destroy();
     assert.equal(x.getDestroyed(), true);
 });
 
-suite("Parented");
-
-test("base", function() {
-    var x = new spear.Parented();
-    var y = new spear.Parented();
+test("parents", function() {
+    var x = new spear.LifeCycle();
+    var y = new spear.LifeCycle();
     y.setParent(x);
     assert.equal(y.getParent(), x);
     assert.equal(x.getChildren()[0], y);
     x.destroy();
+    assert.equal(x.getDestroyed(), true);
     assert.equal(y.getDestroyed(), true);
 });
 

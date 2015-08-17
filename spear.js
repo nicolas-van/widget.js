@@ -44,44 +44,25 @@ function declare(document, $, _, ring) {
     var spear = {};
     spear.internal = {};
 
-    spear.$ = $;
-
-    /**
-     * Mixin to express the concept of destroying an object.
-     * When an object is destroyed, it should release any resource
-     * it could have reserved before.
-     */
-    spear.Destroyable = ring.create({
-        constructor: function() {
-            this.__destroyableDestroyed = false;
-        },
-        /**
-         * Returns true if destroy() was called on the current object.
-         */
-        getDestroyed : function() {
-            return this.__destroyableDestroyed;
-        },
-        /**
-         * Inform the object it should destroy itself, releasing any
-         * resource it could have reserved.
-         */
-        destroy : function() {
-            this.__destroyableDestroyed = true;
-        }
-    });
-
     /**
      * Mixin to structure objects' life-cycles folowing a parent-children
      * relationship. Each object can a have a parent and multiple children.
      * When an object is destroyed, all its children are destroyed too.
      */
-    spear.Parented = ring.create([spear.Destroyable], {
-        __parentedMixin : true,
+    spear.LifeCycle = ring.create({
+        __lifeCycleMixin : true,
         constructor: function(parent) {
             this.$super();
-            this.__parentedChildren = [];
-            this.__parentedParent = null;
+            this.__lifeCycleChildren = [];
+            this.__lifeCycleParent = null;
+            this.__lifeCycleDestroyed = false;
             this.setParent(parent);
+        },
+        /**
+         * Returns true if destroy() was called on the current object.
+         */
+        getDestroyed : function() {
+            return this.__lifeCycleDestroyed;
         },
         /**
          * Set the parent of the current object. When calling this method, the
@@ -93,34 +74,34 @@ function declare(document, $, _, ring) {
          */
         setParent : function(parent) {
             if (this.getParent()) {
-                if (this.getParent().__parentedMixin) {
-                    this.getParent().__parentedChildren = _.without(this
+                if (this.getParent().__lifeCycleMixin) {
+                    this.getParent().__lifeCycleChildren = _.without(this
                             .getParent().getChildren(), this);
                 }
             }
-            this.__parentedParent = parent;
-            if (parent && parent.__parentedMixin) {
-                parent.__parentedChildren.push(this);
+            this.__lifeCycleParent = parent;
+            if (parent && parent.__lifeCycleMixin) {
+                parent.__lifeCycleChildren.push(this);
             }
         },
         /**
          * Return the current parent of the object (or null).
          */
         getParent : function() {
-            return this.__parentedParent;
+            return this.__lifeCycleParent;
         },
         /**
          * Return a list of the children of the current object.
          */
         getChildren : function() {
-            return _.clone(this.__parentedChildren);
+            return _.clone(this.__lifeCycleChildren);
         },
         destroy : function() {
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
             this.setParent(undefined);
-            this.$super();
+            this.__lifeCycleDestroyed = true;
         }
     });
 
@@ -214,7 +195,7 @@ function declare(document, $, _, ring) {
     });
     // end of Backbone's events class
     
-    spear.EventDispatcher = ring.create([spear.Parented], {
+    spear.EventDispatcher = ring.create({
         events: {},
         classInit: function(proto) {
             var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("events").compact()
@@ -244,11 +225,6 @@ function declare(document, $, _, ring) {
         trigger: function() {
             this.__edispatcherEvents.trigger.apply(this.__edispatcherEvents, arguments);
             return this;
-        },
-        destroy: function() {
-            this.trigger("destroyed");
-            this.__edispatcherEvents.off();
-            this.$super();
         }
     });
     
@@ -307,9 +283,6 @@ function declare(document, $, _, ring) {
         },
         fallbackGet: function(key) {
             throw new ring.InvalidArgumentError("Property " + key + " is not defined.");
-        },
-        trigger: function(name) {
-            this.$super.apply(this, arguments);
         }
     });
 
@@ -333,7 +306,7 @@ function declare(document, $, _, ring) {
         }
     });
     
-    spear.Widget = ring.create([spear.DynamicProperties], {
+    spear.Widget = ring.create([spear.LifeCycle, spear.DynamicProperties], {
         tagName: 'div',
         className: '',
         attributes: {},
@@ -385,6 +358,7 @@ function declare(document, $, _, ring) {
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
+            this.off();
             this.$().remove();
             this.$super();
         },
