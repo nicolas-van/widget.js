@@ -141,17 +141,12 @@ test("base", function() {
 test("change event only when changed", function() {
     var x = new spear.DynamicProperties();
     var exec1 = false;
-    var exec2 = false;
     x.on("change:test", function() {exec1 = true;});
-    x.on("change", function() {exec2 = true;});
     x.set({"test": 3});
     assert.equal(exec1, true);
-    assert.equal(exec2, true);
     exec1 = false;
-    exec2 = false;
     x.set({"test": 3});
     assert.equal(exec1, false);
-    assert.equal(exec2, false);
 });
 
 suite("Widget");

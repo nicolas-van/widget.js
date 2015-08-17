@@ -266,8 +266,6 @@ function declare(document, $, _, ring) {
             } else {
                 map = arg1;
             }
-            var tmpSet = this.__propsSetting;
-            this.__propsSetting = false;
             _.each(map, function(val, key) {
                 var prop = self.__properties[key];
                 if (prop) {
@@ -278,11 +276,6 @@ function declare(document, $, _, ring) {
                     self.fallbackSet(key, val);
                 }
             });
-            this.__propsSetting = tmpSet;
-            if (! this.__propsSetting && this.__propsSetted) {
-                this.__propsSetted = false;
-                self.trigger("change", self);
-            }
         },
         get: function(key) {
             var prop = this.__properties[key];
@@ -302,12 +295,6 @@ function declare(document, $, _, ring) {
         },
         trigger: function(name) {
             this.$super.apply(this, arguments);
-            if (/(\s|^)change\:.*/.exec(name)) {
-                if (! this.__propsSetting)
-                    this.trigger("change");
-                else
-                    this.__propsSetted = true;
-            }
         }
     });
 
