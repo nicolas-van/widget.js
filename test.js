@@ -134,7 +134,7 @@ test("static events context", function() {
 
 suite("Properties");
 
-test("base", function() {
+test("base-accessors", function() {
     var Claz = ring.create([spear.Properties], {
         getStuff: function() {
             return this.stuff;
@@ -181,10 +181,8 @@ test("base", function() {
     assert.equal(x.get("thing"), "thing");
 });
 
-suite("DynamicProperties");
-
-test("base", function() {
-    var x = new spear.DynamicProperties();
+test("base-dynamic", function() {
+    var x = new spear.Properties();
     x.set({test: 1});
     assert.equal(x.get("test"), 1);
     var tmp = 0;
@@ -200,7 +198,7 @@ test("base", function() {
 });
 
 test("change event only when changed", function() {
-    var x = new spear.DynamicProperties();
+    var x = new spear.Properties();
     var exec1 = false;
     x.on("change:test", function() {exec1 = true;});
     x.set({"test": 3});

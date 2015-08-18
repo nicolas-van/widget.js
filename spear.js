@@ -264,7 +264,7 @@ function declare(document, $, _, ring) {
                         throw new ring.InvalidArgumentError("Property " + key + " does not have a setter method.");
                     prop.set.call(self, val);
                 } else {
-                    self.fallbackSet(key, val);
+                    self._fallbackSet(key, val);
                 }
             });
         },
@@ -275,23 +275,10 @@ function declare(document, $, _, ring) {
                     throw new ring.InvalidArgumentError("Property " + key + " does not have a getter method.");
                 return prop.get.call(this);
             } else {
-                return this.fallbackGet(key);
+                return this._fallbackGet(key);
             }
         },
-        fallbackSet: function(key, val) {
-            throw new ring.InvalidArgumentError("Property " + key + " is not defined.");
-        },
-        fallbackGet: function(key) {
-            throw new ring.InvalidArgumentError("Property " + key + " is not defined.");
-        }
-    });
-
-    spear.DynamicProperties = spear.Properties.$extend({
-        constructor: function(parent) {
-            this.$super(parent);
-            this.__dynamicProperties = {};
-        },
-        fallbackSet: function(key, val) {
+        _fallbackSet: function(key, val) {
             var tmp = this.__dynamicProperties[key];
             if (tmp === val)
                 return;
@@ -301,12 +288,12 @@ function declare(document, $, _, ring) {
                 newValue: val
             });
         },
-        fallbackGet: function(key) {
+        _fallbackGet: function(key) {
             return this.__dynamicProperties[key];
         }
     });
     
-    spear.Widget = ring.create([spear.LifeCycle, spear.DynamicProperties], {
+    spear.Widget = ring.create([spear.LifeCycle, spear.Properties], {
         tagName: 'div',
         className: '',
         attributes: {},
