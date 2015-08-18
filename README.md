@@ -12,7 +12,7 @@ or routing, there already exists good libraries for that. Spear.js only handles 
 separation of visual components into independant entities. So it provides only features to serve that goal, namely
 widgets, lifecycle management and events.
 
-To install:
+To install with its depencies:
 
     bower install spear
 
