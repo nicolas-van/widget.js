@@ -6,6 +6,8 @@
 Welcome to Spear.js's documentation!
 ====================================
 
+This documentation contains stuff.
+
 Contents:
 
 .. toctree::
@@ -19,4 +21,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
