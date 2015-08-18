@@ -49,3 +49,8 @@ sample application uses Nunjucks_ from Mozilla as it is a high quality and full 
 but you are free to replace it by any other template engine.
 
 .. _Nunjucks: https://mozilla.github.io/nunjucks/
+
+A First Widget
+--------------
+
+Some text...
