@@ -364,27 +364,27 @@ function declare(document, $, _, ring) {
             this.$super();
         },
         appendTo: function(target) {
-            this.$().appendTo(target);
+            this.$().appendTo($($(target)[0]));
             this.__checkAppended();
             return this;
         },
         prependTo: function(target) {
-            this.$().prependTo(target);
+            this.$().prependTo($($(target)[0]));
             this.__checkAppended();
             return this;
         },
         insertAfter: function(target) {
-            this.$().insertAfter(target);
+            this.$().insertAfter($($(target)[0]));
             this.__checkAppended();
             return this;
         },
         insertBefore: function(target) {
-            this.$().insertBefore(target);
+            this.$().insertBefore($($(target)[0]));
             this.__checkAppended();
             return this;
         },
         replace: function(target) {
-            this.$().replace(target);
+            this.$().replace($($(target)[0]));
             this.__checkAppended();
             return this;
         },
