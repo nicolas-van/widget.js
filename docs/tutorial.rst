@@ -24,7 +24,7 @@ The easiest way to start a Spear.js application is to checkout the sample applic
 
 .. code-block:: bash
 
-    git clone https://github.com/nicolas-van/spear.js-starter.git -b 0.4.1
+    git clone https://github.com/nicolas-van/spear.js-starter.git -b 0.5.0
     
 This sample application uses bower_, npm_ and grunt_ to download the dependencies and launch a small web server. Type
 these lines to download everything and start the server:
