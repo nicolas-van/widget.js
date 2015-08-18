@@ -12,7 +12,7 @@ widgets_.
 
 Spear.js is not a full featured framework that can handle all aspects of a web application like network communications
 or routing. There are good libraries for that. Spear.js only handles one aspect of web development: separation of
-visual components into separate entities, and it tries to do it as best as it can.
+visual components into separate entities, and it tries to do it as best as it cans.
 
 Quickstart
 ----------
