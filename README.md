@@ -13,4 +13,5 @@ separation of visual components into independant entities. So it provides only f
 widgets, lifecycle management and events.
 
 License: MIT
+
 Supported browsers: IE up to IE7, all other major browsers up to N-1 version.
