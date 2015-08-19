@@ -2,29 +2,29 @@
 Tutorial
 ========
 
-Presentation of Spear.js
+Presentation of widget.js
 ------------------------
 
-Spear.js is a lightweight framework in JavaScript to separate web applications in multiples manageable components called
+widget.js is a lightweight framework in JavaScript to separate web applications in multiples manageable components called
 widgets_.
 
 .. _widgets: https://en.wikipedia.org/wiki/Widget_(GUI)
 
-Spear.js is not a full featured framework that can handle all aspects of a web application like network communications
-or routing, there already exists good libraries for that. Spear.js only handles one aspect of web development:
+widget.js is not a full featured framework that can handle all aspects of a web application like network communications
+or routing, there already exists good libraries for that. widget.js only handles one aspect of web development:
 separation of visual components into independant entities. So it provides only features to serve that goal, namely
 widgets, lifecycle management and events.
 
 Quickstart
 ----------
 
-The easiest way to start a Spear.js application is to checkout the sample application. Using git_, do this:
+The easiest way to start a widget.js application is to checkout the sample application. Using git_, do this:
 
 .. _git: https://git-scm.com/
 
 .. code-block:: bash
 
-    git clone https://github.com/nicolas-van/spear.js-starter.git -b 0.5.0
+    git clone https://github.com/nicolas-van/widget.js-starter.git -b 0.5.0
     
 This sample application uses bower_, npm_ and grunt_ to download the dependencies and launch a small web server. Type
 these lines to download everything and start the server:
@@ -45,7 +45,7 @@ the application.
 A Word About Template Engines
 #############################
 
-Spear.js is a lightweight framework. As such, it doesn't impose a particular template engine to render HTML. The
+widget.js is a lightweight framework. As such, it doesn't impose a particular template engine to render HTML. The
 sample application uses Nunjucks_ from Mozilla as it is a high quality and full featured template engine in JavaScript,
 but you are free to replace it by any other template engine.
 
@@ -58,15 +58,15 @@ Take a look at the ``src/js/app.js`` file to have an example of your first widge
 
 .. code-block:: javascript
 
-    myapp.Widget1 = spear.Widget.$extend({
+    myapp.Widget1 = widget.Widget.$extend({
         render: function() {
             return nunjucks.render('widget1.html');
         },
     });
     
-We can see that ``Widget1`` is a simple subclass of ``spear.Widget``. It overrides the method ``render()`` to return
+We can see that ``Widget1`` is a simple subclass of ``widget.Widget``. It overrides the method ``render()`` to return
 some HTML code rendered using Nunjucks (the ``widget1.html`` file is located in the ``views`` folder). The ``render()``
-method is a convenience used to indicate to the ``spear.Widget`` class the base HTML that should be appended to our
+method is a convenience used to indicate to the ``widget.Widget`` class the base HTML that should be appended to our
 widget.
 
 In the ``index.html`` file we can see how this widget is instantiated and appended into the DOM:
@@ -91,7 +91,7 @@ You can access the root element of a widget by using the ``$()`` method:
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         render: function() {
             return "<p>Hi, I'm a widget!</p>";
         },
@@ -107,7 +107,7 @@ of the root element can be customized using the ``tagName``, ``attributes`` and 
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         tagName: "span",
         className: "mywidget",
         attributes: {
@@ -130,7 +130,7 @@ Of course you can modify any part of the widget at any time.
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         render: function() {
             return "<p>Hi, I'm a widget!</p>";
         },
@@ -154,7 +154,7 @@ into the DOM you can use one of the methods like ``appendTo()``:
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         render: function() {
             return "<p>Hi, I'm a widget!</p>";
         },
@@ -174,17 +174,17 @@ to serve the same purpose, with some difference regarding the place where the ro
 * ``detach()`` (this one removes the widget from the DOM)
 
 .. warning:: It is not recommended to use the ``appendTo()`` and similar methods directly on the jQuery object returned
-          by ``$()``. Doing so will disable some of Spear.js's features that will be explained later.
+          by ``$()``. Doing so will disable some of widget.js's features that will be explained later.
           
 Widget Events
 -------------
 
-Events is one of the main features of Spear.js, and an incredibly useful tool in all modern UI libraries. Widget events
+Events is one of the main features of widget.js, and an incredibly useful tool in all modern UI libraries. Widget events
 are separate from DOM events like ``click`` or ``submit``. They are used to define your own custom events. Example:
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         doSomething: function() {
             // some code...
             this.trigger("someEvent", "hello");
@@ -202,7 +202,7 @@ are separate from DOM events like ``click`` or ``submit``. They are used to defi
 ``on()`` is used to register event handlers, ``trigger()`` is used to trigger one and ``off()`` can be used to
 unregister if you need to.
 
-.. seealso:: If you want to use events outside of widgets you can use the ``spear.EventDispatcher`` class.
+.. seealso:: If you want to use events outside of widgets you can use the ``widget.EventDispatcher`` class.
 
 Properties
 ----------
@@ -213,12 +213,12 @@ ways to use properties: simple properties and accessors.
 Simple Properties
 #################
 
-Simply use the ``set()`` and ``get()`` methods on ``spear.Widget`` instances. They will set and get the asked property
+Simply use the ``set()`` and ``get()`` methods on ``widget.Widget`` instances. They will set and get the asked property
 and trigger ``change:xxx`` events where ``xxx`` is the property name. Example:
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         constructor: function(parent) {
             this.$super(parent);
             this.on("change:color", function() {
@@ -248,7 +248,7 @@ You can also define getter and setter for properties. The downside is that you m
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         getColor: function() {
             return this.$().css("background-color");
         },
@@ -272,7 +272,7 @@ You can also define getter and setter for properties. The downside is that you m
 .. note:: When using accessors it is still possible to use ``get()`` and ``set()``. ``get("color")`` will call
           ``getColor()`` and ``set("color")`` will call ``setColor()``.
 
-.. seealso:: If you want to use properties outside of widgets you can use the ``spear.Properties`` class.
+.. seealso:: If you want to use properties outside of widgets you can use the ``widget.Properties`` class.
           
 Widget Life Cycle
 -----------------
@@ -284,7 +284,7 @@ We saw how to create widgets, now it is time to destroy them. To do so just call
 
 .. code-block:: javascript
 
-    var x = new spear.Widget();
+    var x = new widget.Widget();
     x.appendTo($("body"));
     x.destroy();
     // the root element of x has been removed from the DOM
@@ -303,17 +303,17 @@ that should be stopped.
 Parent-Children Relationship
 ############################
 
-In the constructor of ``spear.Widget`` there is an argument we didn't used until now: ``parent``.
+In the constructor of ``widget.Widget`` there is an argument we didn't used until now: ``parent``.
 
 .. code-block:: javascript
 
-    var MyWidget1 = spear.Widget.$extend({
+    var MyWidget1 = widget.Widget.$extend({
         constructor: function(parent) {
             this.$super(parent);
             this.otherWidget = new MyWidget2(this).appendTo(this.$());
         }
     });
-    var MyWidget2 = spear.Widget.$extend({
+    var MyWidget2 = widget.Widget.$extend({
         // another widget
     });
     var x = new MyWidget1().appendTo($("body"));
@@ -333,12 +333,12 @@ Life cycle management using parent-children relationship is useful in big applic
 other widgets. If relationship are correctly defined, whenever you destroy a widget all the widgets it created will
 be destroyed. By extension all ressources that were directly or indirectly reserved by that widget will also be freed.
 
-.. seealso:: If you want to use life cycle management outside of widgets you can use the ``spear.LifeCycle`` class.
+.. seealso:: If you want to use life cycle management outside of widgets you can use the ``widget.LifeCycle`` class.
 
 Putting It All Together
 -----------------------
 
-Spear.js is just a toolbox that gives some indications on how to define good components. It is still necessary to use
+widget.js is just a toolbox that gives some indications on how to define good components. It is still necessary to use
 common sense and good practices to create scalable and maintainable applications.
 
 Widgets should be considered as black boxes from the outside. A widget's HTML should only be modified by that same
@@ -350,7 +350,7 @@ As example, only a widget should register DOM events on one of its own elements.
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         render: function() {
             return nunjucks.render('myform.html');
         },
@@ -374,7 +374,7 @@ piece of code in our application that already used the ``MyWidget`` class will n
 Tools and Shortcuts
 -------------------
 
-The previous parts of this tutorial presented the main features of Spear.js, but there are still many shortcuts that
+The previous parts of this tutorial presented the main features of widget.js, but there are still many shortcuts that
 can be used to reduce the amount of code:
 
 Setting Multiple Properties
@@ -400,7 +400,7 @@ you can add event handlers in the ``events`` attribute:
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         events: {
             "change:color": function() {
                 console.log("color changed");
@@ -421,7 +421,7 @@ Just like widget events static definition, there is an alternative to calling ``
 
 .. code-block:: javascript
 
-    var MyWidget = spear.Widget.$extend({
+    var MyWidget = widget.Widget.$extend({
         domEvents: {
             "mouseenter": function() {
                 console.log("mouse entered widget");

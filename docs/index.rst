@@ -1,10 +1,10 @@
 
-Spear.js Documentation
+widget.js Documentation
 ======================
 
-This is the documentation of Spear.js_, the lightweight javascript widget framework.
+This is the documentation of widget.js_, the lightweight javascript widget framework.
 
-.. _Spear.js: https://github.com/nicolas-van/spear.js
+.. _widget.js: https://github.com/nicolas-van/widget.js
 
 Contents:
 
