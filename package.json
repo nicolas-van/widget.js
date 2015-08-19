@@ -1,6 +1,6 @@
 {
   "name": "widgetjs",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "widget.js framework",
   "main": "widget.js",
   "author": "Nicolas Vanhoren",
