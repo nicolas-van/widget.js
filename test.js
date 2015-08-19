@@ -10,21 +10,21 @@ if (typeof(module) !== "undefined") {
     var doc = jsdom();
     var window = doc.parentWindow;
     global.$ = require("jquery")(window);
-    global.spear = require("./spear")(window);
+    global.widget = require("./widget")(window);
 }
 
 suite("LifeCycle");
 
 test("base", function() {
-    var x = new spear.LifeCycle();
+    var x = new widget.LifeCycle();
     assert.equal(!!x.getDestroyed(), false);
     x.destroy();
     assert.equal(x.getDestroyed(), true);
 });
 
 test("parents", function() {
-    var x = new spear.LifeCycle();
-    var y = new spear.LifeCycle();
+    var x = new widget.LifeCycle();
+    var y = new widget.LifeCycle();
     y.setParent(x);
     assert.equal(y.getParent(), x);
     assert.equal(x.getChildren()[0], y);
@@ -36,7 +36,7 @@ test("parents", function() {
 suite("Events");
 
 test("base", function() {
-    var x = new spear.internal.Events();
+    var x = new widget.internal.Events();
     var tmp = 0;
     var fct = function() {tmp = 1;};
     x.on("test", fct);
@@ -52,7 +52,7 @@ test("base", function() {
 suite("EventDispatcher");
 
 test("base", function() {
-    var x = new spear.EventDispatcher();
+    var x = new widget.EventDispatcher();
     var tmp = 0;
     var fct = function() {tmp = 1;};
     x.on("test", fct);
@@ -68,7 +68,7 @@ test("base", function() {
 });
 
 test("context", function() {
-    var x = new spear.EventDispatcher();
+    var x = new widget.EventDispatcher();
     var tmp = null;
     x.on("test", function() {
         tmp = this;
@@ -85,7 +85,7 @@ test("context", function() {
 
 test("static events", function() {
     var tmp = 0;
-    var Claz = ring.create(spear.EventDispatcher, {
+    var Claz = ring.create(widget.EventDispatcher, {
         events: {
             testevent: function() {
                 tmp = 1;
@@ -119,7 +119,7 @@ test("static events", function() {
 
 test("static events context", function() {
     var tmp = null;
-    var Claz = ring.create(spear.EventDispatcher, {
+    var Claz = ring.create(widget.EventDispatcher, {
         events: {
             test: "test"
         },
@@ -135,7 +135,7 @@ test("static events context", function() {
 suite("Properties");
 
 test("base-accessors", function() {
-    var Claz = ring.create([spear.Properties], {
+    var Claz = ring.create([widget.Properties], {
         getStuff: function() {
             return this.stuff;
         },
@@ -182,7 +182,7 @@ test("base-accessors", function() {
 });
 
 test("base-dynamic", function() {
-    var x = new spear.Properties();
+    var x = new widget.Properties();
     x.set({test: 1});
     assert.equal(x.get("test"), 1);
     var tmp = 0;
@@ -198,7 +198,7 @@ test("base-dynamic", function() {
 });
 
 test("change event only when changed", function() {
-    var x = new spear.Properties();
+    var x = new widget.Properties();
     var exec1 = false;
     x.on("change:test", function() {exec1 = true;});
     x.set({"test": 3});
@@ -211,7 +211,7 @@ test("change event only when changed", function() {
 suite("Widget");
 
 test("base", function() {
-    var Claz = ring.create([spear.Widget], {
+    var Claz = ring.create([widget.Widget], {
         tagName: "span",
         className: "mytestspan",
         attributes: {
@@ -239,7 +239,7 @@ test("base", function() {
 
 test("domEvents", function() {
     var test = 0;
-    var Claz = ring.create([spear.Widget], {
+    var Claz = ring.create([widget.Widget], {
         domEvents: {
             "testevent": function() {
                 test = 1;
@@ -262,8 +262,8 @@ test("domEvents", function() {
 });
 
 test("appendEvents", function() {
-    var x = new spear.Widget();
-    var y = new spear.Widget();
+    var x = new widget.Widget();
+    var y = new widget.Widget();
     assert.strictEqual(x.__widgetAppended, false);
     assert.strictEqual(y.__widgetAppended, false);
     y.appendTo(x.$());

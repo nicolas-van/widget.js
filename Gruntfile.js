@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['spear.js', 'test.js'],
+            files: ['widget.js', 'test.js'],
             options: {
                 es3: true, // ie 7 compatibility
                 eqeqeq: true, // no == or !=
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
                   archive: pack.name + "-" + pack.version + ".zip",
                 },
                 files: [
-                    {src: 'spear.js', dest: '.'},
+                    {src: 'widget.js', dest: '.'},
                     {expand: true, flatten: true, src: 'bower_components/underscore/underscore.js', dest: '.'},
                     {expand: true, flatten: true, src: 'bower_components/jquery/jquery.js', dest: '.'},
                     {expand: true, flatten: true, src: 'bower_components/ring/ring.js', dest: '.'},

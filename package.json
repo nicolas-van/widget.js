@@ -1,16 +1,16 @@
 {
-  "name": "spear",
+  "name": "widgetjs",
   "version": "0.5.0",
-  "description": "Spear.js Framework",
-  "main": "spear.js",
+  "description": "widget.js framework",
+  "main": "widget.js",
   "author": "Nicolas Vanhoren",
   "keywords": [
-    "spear",
+    "widget",
     "framework"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/nicolas-van/spear.js.git"
+    "url": "git://github.com/nicolas-van/widget.js.git"
   },
   "dependencies": {
     "underscore": ">=1.8.3",

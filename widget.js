@@ -29,27 +29,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 if (typeof(exports) !== "undefined") { // node
     module.exports = function(w) {
         if (! w.document) {
-            throw new Error( "Spear.js requires a window with a document" );
+            throw new Error( "widget.js requires a window with a document" );
         }
         var und = require("underscore");
         var jq = require("jquery")(w);
         var rg = require("ring");
         return declare(w.document, jq, und, rg);
     };
-} else { // define global variable 'spear'
-    window.spear = declare(window.document, $, _, ring);
+} else { // define global variable 'widget'
+    window.widget = declare(window.document, $, _, ring);
 }
 
 function declare(document, $, _, ring) {
-    var spear = {};
-    spear.internal = {};
+    var widget = {};
+    widget.internal = {};
 
     /**
      * Mixin to structure objects' life-cycles folowing a parent-children
      * relationship. Each object can a have a parent and multiple children.
      * When an object is destroyed, all its children are destroyed too.
      */
-    spear.LifeCycle = ring.create({
+    widget.LifeCycle = ring.create({
         __lifeCycleMixin : true,
         constructor: function(parent) {
             this.$super();
@@ -116,7 +116,7 @@ function declare(document, $, _, ring) {
     // Backbone may be freely distributed under the MIT license.
     // For all details and documentation:
     // http://backbonejs.org
-    spear.internal.Events = ring.create({
+    widget.internal.Events = ring.create({
         on : function(events, callback, context) {
             var ev;
             events = events.split(/\s+/);
@@ -195,7 +195,7 @@ function declare(document, $, _, ring) {
     });
     // end of Backbone's events class
     
-    spear.EventDispatcher = ring.create({
+    widget.EventDispatcher = ring.create({
         events: {},
         classInit: function(proto) {
             var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("events").compact()
@@ -209,7 +209,7 @@ function declare(document, $, _, ring) {
         },
         constructor: function(parent) {
             this.$super(parent);
-            this.__edispatcherEvents = new spear.internal.Events();
+            this.__edispatcherEvents = new widget.internal.Events();
             _.each(this.__eventDispatcherStaticEvents, _.bind(function(el) {
                 this.on(el[0], typeof el[1] === "string" ? this[el[1]] : el[1], this);
             }, this));
@@ -228,7 +228,7 @@ function declare(document, $, _, ring) {
         }
     });
     
-    spear.Properties = spear.EventDispatcher.$extend({
+    widget.Properties = widget.EventDispatcher.$extend({
         classInit: function(proto) {
             var flat = _.extend({}, proto);
             var props = {};
@@ -293,7 +293,7 @@ function declare(document, $, _, ring) {
         }
     });
     
-    spear.Widget = ring.create([spear.LifeCycle, spear.Properties], {
+    widget.Widget = ring.create([widget.LifeCycle, widget.Properties], {
         tagName: 'div',
         className: '',
         attributes: {},
@@ -316,7 +316,7 @@ function declare(document, $, _, ring) {
             _.each(this.attributes, function(val, key) {
                 this.$().attr(key, val);
             }, this);
-            this.$().data("spearWidget", this);
+            this.$().data("widgetWidget", this);
             _.each(this.__widgetStaticEvents, function(el) {
                 var key = el[0];
                 var val = el[1];
@@ -397,17 +397,17 @@ function declare(document, $, _, ring) {
                 return;
             this.__widgetAppended = inHtml;
             this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
-            this.$("*").filter(function() { return spear.getWidget($(this)); }).each(function() {
-                $(this).data("spearWidget").__widgetAppended = inHtml;
-                $(this).data("spearWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            this.$("*").filter(function() { return widget.getWidget($(this)); }).each(function() {
+                $(this).data("widgetWidget").__widgetAppended = inHtml;
+                $(this).data("widgetWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
         }
     });
     
-    spear.getWidget = function(element) {
-        return element.data("spearWidget") || null;
+    widget.getWidget = function(element) {
+        return element.data("widgetWidget") || null;
     };
 
-    return spear;
+    return widget;
 }
 })();

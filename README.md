@@ -1,20 +1,20 @@
 
-Spear.js - The lightweight JavaScript widget framework
+widget.js - The lightweight JavaScript widget framework
 ======================================================
 
-[Read the documentation here](http://spearjs.readthedocs.org/)
+[Read the documentation here](http://widgetjs.readthedocs.org/)
 
-Spear.js is a lightweight framework in JavaScript to separate web applications in multiples manageable components called
+widget.js is a lightweight framework in JavaScript to separate web applications in multiples manageable components called
 widgets.
 
-Spear.js is not a full featured framework that can handle all aspects of a web application like network communications
-or routing, there already exists good libraries for that. Spear.js only handles one aspect of web development:
+widget.js is not a full featured framework that can handle all aspects of a web application like network communications
+or routing, there already exists good libraries for that. widget.js only handles one aspect of web development:
 separation of visual components into independant entities. So it provides only features to serve that goal, namely
 widgets, lifecycle management and events.
 
 To install with its depencies:
 
-    bower install spear
+    bower install widget
 
 License: MIT
 
