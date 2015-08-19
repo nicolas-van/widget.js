@@ -5,7 +5,7 @@ Tutorial
 Presentation of widget.js
 ------------------------
 
-widget.js is a lightweight framework in JavaScript to separate web applications in multiples manageable components called
+widget.js is a lightweight framework in JavaScript to separate web applications in multiples reusable components called
 widgets_.
 
 .. _widgets: https://en.wikipedia.org/wiki/Widget_(GUI)
