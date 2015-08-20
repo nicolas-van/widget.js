@@ -44,11 +44,6 @@ function declare(document, $, _, ring) {
     var widget = {};
     widget.internal = {};
 
-    /**
-     * Mixin to structure objects' life-cycles folowing a parent-children
-     * relationship. Each object can a have a parent and multiple children.
-     * When an object is destroyed, all its children are destroyed too.
-     */
     widget.LifeCycle = ring.create({
         __lifeCycleMixin : true,
         constructor: function(parent) {
@@ -58,20 +53,9 @@ function declare(document, $, _, ring) {
             this.__lifeCycleDestroyed = false;
             this.setParent(parent);
         },
-        /**
-         * Returns true if destroy() was called on the current object.
-         */
         getDestroyed : function() {
             return this.__lifeCycleDestroyed;
         },
-        /**
-         * Set the parent of the current object. When calling this method, the
-         * parent will also be informed and will return the current object
-         * when its getChildren() method is called. If the current object did
-         * already have a parent, it is unregistered before, which means the
-         * previous parent will not return the current object anymore when its
-         * getChildren() method is called.
-         */
         setParent : function(parent) {
             if (this.getParent()) {
                 if (this.getParent().__lifeCycleMixin) {
@@ -84,15 +68,9 @@ function declare(document, $, _, ring) {
                 parent.__lifeCycleChildren.push(this);
             }
         },
-        /**
-         * Return the current parent of the object (or null).
-         */
         getParent : function() {
             return this.__lifeCycleParent;
         },
-        /**
-         * Return a list of the children of the current object.
-         */
         getChildren : function() {
             return _.clone(this.__lifeCycleChildren);
         },
@@ -105,13 +83,6 @@ function declare(document, $, _, ring) {
         }
     });
 
-    /*
-     * Yes, we steal Backbone's events :)
-     * 
-     * This class just handle the dispatching of events, it is not meant to be extended,
-     * nor used directly. All integration with parenting and automatic unregistration of
-     * events is done in the EventDispatcher class.
-     */
     // (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
     // Backbone may be freely distributed under the MIT license.
     // For all details and documentation:
@@ -338,9 +309,6 @@ function declare(document, $, _, ring) {
             else
                 return this.__widgetElement;
         },
-        /**
-         * Destroys the current widget, also destroys all its children before destroying itself.
-         */
         destroy: function() {
             this.trigger("destroying");
             _.each(this.getChildren(), function(el) {
@@ -380,11 +348,6 @@ function declare(document, $, _, ring) {
             this.__checkAppended();
             return this;
         },
-        /**
-         * This is the method to implement to render the Widget.
-         *
-         * @returns An html string that will be appended to `this.$()`.
-         */
         render: function() {
             return "";
         },
