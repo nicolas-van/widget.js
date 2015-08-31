@@ -224,17 +224,50 @@ test("base", function() {
     var x = new Claz();
     x.appendTo($("body"));
     var $el = $("#testspan");
-    assert.equal($el.length, 1);
-    assert.equal($el.parents()[0], $("body")[0]);
-    assert.equal($el.html(), "test");
-    assert.equal($el[0], $("span.mytestspan")[0]);
+    assert.strictEqual($el.length, 1);
+    assert.strictEqual($el.parents()[0], $("body")[0]);
+    assert.strictEqual($el.html(), "test");
+    assert.strictEqual($el[0], $("span.mytestspan")[0]);
+    x.detach();
+    assert.strictEqual(x.$().length, 1);
+    assert.strictEqual(x.$().parents().length, 0);
+    assert.strictEqual(x.$().html(), "test");
+    assert.strictEqual($("span.mytestspan").length, 0);
+    x.prependTo($("body"));
+    $el = $("#testspan");
+    assert.strictEqual($el.length, 1);
+    assert.strictEqual($el.parents()[0], $("body")[0]);
+    assert.strictEqual($el.html(), "test");
+    assert.strictEqual($el[0], $("span.mytestspan")[0]);
+    x.detach();
+    $("<div class='testdiv'></div>").appendTo("body");
+    x.insertAfter($(".testdiv"));
+    $el = $("#testspan");
+    assert.strictEqual($el.length, 1);
+    assert.strictEqual($el.parents()[0], $("body")[0]);
+    assert.strictEqual($el.html(), "test");
+    assert.strictEqual($el[0], $("span.mytestspan")[0]);
+    x.detach();
+    x.insertBefore($(".testdiv"));
+    $el = $("#testspan");
+    assert.strictEqual($el.length, 1);
+    assert.strictEqual($el.parents()[0], $("body")[0]);
+    assert.strictEqual($el.html(), "test");
+    assert.strictEqual($el[0], $("span.mytestspan")[0]);
+    x.detach();
+    x.replace($(".testdiv"));
+    $el = $("#testspan");
+    assert.strictEqual($el.length, 1);
+    assert.strictEqual($el.parents()[0], $("body")[0]);
+    assert.strictEqual($el.html(), "test");
+    assert.strictEqual($el[0], $("span.mytestspan")[0]);
     
     var y = new Claz(x);
-    assert.equal(y.getParent(), x);
+    assert.strictEqual(y.getParent(), x);
     
     x.destroy();
     $el = $("#testspan");
-    assert.equal($el.length, 0);
+    assert.strictEqual($el.length, 0);
 });
 
 test("domEvents", function() {

@@ -339,7 +339,7 @@ function declare(document, $, _, ring) {
             return this;
         },
         replace: function(target) {
-            this.$().replace($($(target)[0]));
+            this.$().replaceAll($($(target)[0]));
             this.__checkAppended();
             return this;
         },
