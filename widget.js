@@ -232,7 +232,7 @@ function declare(document, $, _, ring) {
                 var prop = self.__properties[key];
                 if (prop) {
                     if (! prop.set)
-                        throw new ring.InvalidArgumentError("Property " + key + " does not have a setter method.");
+                        throw new ring.ValueError("Property " + key + " does not have a setter method.");
                     prop.set.call(self, val);
                 } else {
                     self._fallbackSet(key, val);
@@ -243,7 +243,7 @@ function declare(document, $, _, ring) {
             var prop = this.__properties[key];
             if (prop) {
                 if (! prop.get)
-                    throw new ring.InvalidArgumentError("Property " + key + " does not have a getter method.");
+                    throw new ring.ValueError("Property " + key + " does not have a getter method.");
                 return prop.get.call(this);
             } else {
                 return this._fallbackGet(key);
