@@ -166,4 +166,65 @@ test("autoParent", function() {
     assert.strictEqual(y.parent, x);
 });
 
+test("domEventsSimple", function() {
+    var x = new widget.Widget();
+    var tmp = 0;
+    x.on("dom:click", function(e) {
+        assert.strictEqual(this, x);
+        assert.strictEqual(e.detail.target, x.el);
+        tmp = 1;
+    });
+    x.el.click();
+    assert.strictEqual(tmp, 1);
+});
+
+test("domEventsBubbling", function() {
+    class Claz extends widget.Widget {
+        render() {
+            return "<p><button></button></p>";
+        }
+    }
+    var x = new Claz();
+    var tmp = 0;
+    var event = function(e) {
+        assert.strictEqual(this, x);
+        assert.strictEqual(e.detail.target, x.el.querySelector("button"));
+        tmp = 1;
+    };
+    x.on("dom:click button", event);
+    assert.notEqual(x.__widgetDomEvents["dom:click button"], undefined);
+    x.el.querySelector("button").click();
+    assert.strictEqual(tmp, 1);
+    tmp = 0;
+    x.off("dom:click button", event);
+    assert.equal(x.__widgetDomEvents["dom:click button"], undefined);
+    x.el.querySelector("button").click();
+    assert.strictEqual(tmp, 0);
+    
+    tmp = 0;
+    event = function(e) {
+        assert.strictEqual(this, x);
+        assert.strictEqual(e.detail.target, x.el.querySelector("button"));
+        tmp = 1;
+    };
+    x.on("dom:click p", event);
+    assert.notEqual(x.__widgetDomEvents["dom:click p"], undefined);
+    x.el.querySelector("button").click();
+    assert.strictEqual(tmp, 1);
+    tmp = 0;
+    x.off("dom:click p", event);
+    assert.equal(x.__widgetDomEvents["dom:click p"], undefined);
+    x.el.querySelector("button").click();
+    assert.strictEqual(tmp, 0);
+    
+    tmp = 0;
+    event = function(e) {
+        tmp = 1;
+    };
+    x.on("dom:click button", event);
+    assert.notEqual(x.__widgetDomEvents["dom:click button"], undefined);
+    x.el.querySelector("p").click();
+    assert.strictEqual(tmp, 0);
+});
+
 })();

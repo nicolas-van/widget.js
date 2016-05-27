@@ -92,7 +92,6 @@ function declare(document, _) {
             for (var i = 0; i < stack.length; i++){
                 if (stack[i] === callback) {
                     stack.splice(i, 1);
-                    return this.removeEventListener(type, callback);
                 }
             }
         }
@@ -133,6 +132,7 @@ function declare(document, _) {
             super();
             this.__widgetAppended = false;
             this.__widgetExplicitParent = false;
+            this.__widgetDomEvents = {};
             this.__widgetElement = document.createElement(this.tagName());
             _.each(_.filter(this.className().split(" "), (name) => name !== ""), name => this.el.classList.add(name));
             _.each(this.attributes(), (val, key) => this.el.setAttribute(key, val));
@@ -184,6 +184,46 @@ function declare(document, _) {
         }
         render() {
             return "";
+        }
+        addEventListener(type, callback) {
+            super.addEventListener(type, callback);
+            var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
+            if (! res)
+                return;
+            if (! this.__widgetDomEvents[type]) {
+                var domCallback;
+                if (! res[2]) {
+                    domCallback = function(e) {
+                        this.trigger(type, e);
+                    }.bind(this);
+                } else {
+                    domCallback = function(e) {
+                        var elem = e.target;
+                        while (elem && elem !== this.el && ! elem.matches(res[2])) {
+                            elem = elem.parentNode;
+                        }
+                        if (elem && elem !== this.el)
+                            this.trigger(type, e);
+                    }.bind(this);
+                }
+                this.el.addEventListener(res[1], domCallback);
+                this.__widgetDomEvents[type] = [1, domCallback];
+            } else {
+                this.__widgetDomEvents[type][0] += 1;
+            }
+        }
+        removeEventListener(type, callback) {
+            super.removeEventListener(type, callback);
+            var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
+            if (! res)
+                return;
+            if (! this.__widgetDomEvents[type])
+                return;
+            this.__widgetDomEvents[type][0] -= 1;
+            if (this.__widgetDomEvents[type][0] === 0) {
+                this.el.removeEventListener(res[1], this.__widgetDomEvents[type][1]);
+                delete this.__widgetDomEvents[type];
+            }
         }
         get appendedToDom() {
             return this.__widgetAppended;
