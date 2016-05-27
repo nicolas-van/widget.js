@@ -65,36 +65,6 @@ test("context", function() {
     assert.strictEqual(tmp, "test");
 });
 
-
-suite("Properties");
-
-test("base-dynamic", function() {
-    var x = new widget.Properties();
-    x.set({test: 1});
-    assert.equal(x.get("test"), 1);
-    var tmp = 0;
-    x.on("change:test", function(model, options) {
-        tmp = 1;
-        assert.equal(options.oldValue, 1);
-        assert.equal(options.newValue, 2);
-        assert.equal(x.get("test"), 2);
-        assert.equal(model, x);
-    });
-    x.set({test: 2});
-    assert.equal(tmp, 1);
-});
-
-test("change event only when changed", function() {
-    var x = new widget.Properties();
-    var exec1 = false;
-    x.on("change:test", function() {exec1 = true;});
-    x.set({"test": 3});
-    assert.equal(exec1, true);
-    exec1 = false;
-    x.set({"test": 3});
-    assert.equal(exec1, false);
-});
-
 suite("Widget");
 
 test("base", function() {

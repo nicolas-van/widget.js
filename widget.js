@@ -127,36 +127,7 @@ function declare(document, _) {
         }
     };
 
-    widget.Properties = class Properties extends widget.EventDispatcher {
-        constructor(parent) {
-            super(parent);
-            this.__dynamicProperties = {};
-        }
-        set(arg1, arg2) {
-            var map;
-            if (typeof arg1 === "string") {
-                map = {};
-                map[arg1] = arg2;
-            } else {
-                map = arg1;
-            }
-            _.each(map, _.bind(function(val, key) {
-                var tmp = this.__dynamicProperties[key];
-                if (tmp === val)
-                    return;
-                this.__dynamicProperties[key] = val;
-                this.trigger("change:" + key, this, {
-                    oldValue: tmp,
-                    newValue: val
-                });
-            }, this));
-        }
-        get(key) {
-            return this.__dynamicProperties[key];
-        }
-    };
-
-    widget.Widget = class Widget extends widget.Properties {
+    widget.Widget = class Widget extends widget.EventDispatcher {
         tagName() { return 'div'; }
         className() { return ''; }
         attributes() { return {}; }
@@ -164,19 +135,22 @@ function declare(document, _) {
             super(parent);
             this.__widgetAppended = false;
             this.__widgetElement = $("<" + this.tagName() + ">");
-            this.$().addClass(this.className());
+            this.el.addClass(this.className());
             _.each(this.attributes(), _.bind(function(val, key) {
-                this.$().attr(key, val);
+                this.el.attr(key, val);
             }, this));
-            this.$().data("widgetWidget", this);
+            this.el.data("widgetWidget", this);
     
-            this.$().html(this.render());
+            this.el.html(this.render());
+        }
+        get el() {
+            return this.__widgetElement;
         }
         $(attr) {
             if (attr)
-                return this.__widgetElement.find.apply(this.__widgetElement, arguments);
+                return this.el.find.apply(this.el, arguments);
             else
-                return this.__widgetElement;
+                return this.el;
         }
         destroy() {
             this.trigger("destroying");
@@ -184,43 +158,43 @@ function declare(document, _) {
                 el.destroy();
             });
             this.off();
-            this.$().remove();
+            this.el.remove();
             super.destroy();
         }
         appendTo(target) {
-            this.$().appendTo($($(target)[0]));
+            this.el.appendTo($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         prependTo(target) {
-            this.$().prependTo($($(target)[0]));
+            this.el.prependTo($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         insertAfter(target) {
-            this.$().insertAfter($($(target)[0]));
+            this.el.insertAfter($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         insertBefore(target) {
-            this.$().insertBefore($($(target)[0]));
+            this.el.insertBefore($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         replace(target) {
-            this.$().replaceAll($($(target)[0]));
+            this.el.replaceAll($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         detach() {
-            this.$().detach();
+            this.el.detach();
             this.__checkAppended();
             return this;
         }
         render() {
             return "";
         }
-        getAppendedToDom() {
+        get appendedToDom() {
             return this.__widgetAppended;
         }
         __checkAppended() {
