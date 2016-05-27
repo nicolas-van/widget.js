@@ -94,20 +94,22 @@ test("change event only when changed", function() {
     x.set({"test": 3});
     assert.equal(exec1, false);
 });
-/*
+
 suite("Widget");
 
 test("base", function() {
-    var Claz = ring.create([widget.Widget], {
-        tagName: "span",
-        className: "mytestspan",
-        attributes: {
-            "id": "testspan"
-        },
-        render: function() {
+    var Claz = class extends widget.Widget {
+        tagName() { return "span"; }
+        className() { return "mytestspan"; }
+        attributes() {
+            return {
+                "id": "testspan"
+            };
+        }
+        render() {
             this.$().html("test");
         }
-    });
+    };
     var x = new Claz();
     x.appendTo($("body"));
     var $el = $("#testspan");
@@ -157,30 +159,6 @@ test("base", function() {
     assert.strictEqual($el.length, 0);
 });
 
-test("domEvents", function() {
-    var test = 0;
-    var Claz = ring.create([widget.Widget], {
-        domEvents: {
-            "testevent": function() {
-                test = 1;
-            },
-            "testevent2 .testspan": function() {
-                test = 2;
-            }
-        },
-        render: function() {
-            this.$().html("<span class='testspan'></span>");
-        }
-    });
-    var x = new Claz();
-    x.appendTo($("body"));
-    assert.equal(test, 0);
-    x.$().trigger("testevent");
-    assert.equal(test, 1);
-    x.$(".testspan").trigger("testevent2");
-    assert.equal(test, 2);
-});
-
 test("appendEvents", function() {
     var x = new widget.Widget();
     var y = new widget.Widget();
@@ -205,5 +183,5 @@ test("appendEvents", function() {
     x.destroy();
     y.destroy();
 });
-*/
+
 })();

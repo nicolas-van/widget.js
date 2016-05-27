@@ -32,10 +32,11 @@ if (typeof(exports) !== "undefined") { // node
             throw new Error( "widget.js requires a window with a document" );
         }
         var _ = require("lodash");
-        return declare(w.document, _);
+        var jquery = require("jquery")(w);
+        return declare(w.document, _, jquery);
     };
 } else { // define global variable 'widget'
-    window.widget = declare(window.document, _);
+    window.widget = declare(window.document, _, $);
 }
 
 function declare(document, _) {
@@ -154,98 +155,75 @@ function declare(document, _) {
             return this.__dynamicProperties[key];
         }
     };
-/*
+
     widget.Widget = class Widget extends widget.Properties {
         tagName() { return 'div'; }
         className() { return ''; }
         attributes() { return {}; }
-        domEvents() { return {}; }
-        classInit: function(proto) {
-            var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("domEvents").compact()
-                .reverse().value();
-            proto.__widgetStaticEvents = [];
-            _.each(eventsDicts, function(dct) {
-                _.each(dct, function(val, key) {
-                    proto.__widgetStaticEvents.push([key, val]);
-                });
-            });
-        },
-        constructor: function(parent) {
-            this.$super(parent);
+        constructor(parent) {
+            super(parent);
             this.__widgetAppended = false;
-            this.__widgetElement = $("<" + this.tagName + ">");
-            this.$().addClass(this.className);
-            _.each(this.attributes, function(val, key) {
+            this.__widgetElement = $("<" + this.tagName() + ">");
+            this.$().addClass(this.className());
+            _.each(this.attributes(), _.bind(function(val, key) {
                 this.$().attr(key, val);
-            }, this);
+            }, this));
             this.$().data("widgetWidget", this);
-            _.each(this.__widgetStaticEvents, function(el) {
-                var key = el[0];
-                var val = el[1];
-                key = key.split(" ");
-                val = _.bind(typeof val === "string" ? this[val] : val, this);
-                if (key.length > 1) {
-                    this.$().on(key[0], key[1], val);
-                } else {
-                    this.$().on(key[0], val);
-                }
-            }, this);
     
-            this.setParent(parent);
             this.$().html(this.render());
-        },
-        $: function(attr) {
+        }
+        $(attr) {
             if (attr)
                 return this.__widgetElement.find.apply(this.__widgetElement, arguments);
             else
                 return this.__widgetElement;
-        },
-        destroy: function() {
+        }
+        destroy() {
             this.trigger("destroying");
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
             this.off();
             this.$().remove();
-            this.$super();
-        },
-        appendTo: function(target) {
+            super.destroy();
+        }
+        appendTo(target) {
             this.$().appendTo($($(target)[0]));
             this.__checkAppended();
             return this;
-        },
-        prependTo: function(target) {
+        }
+        prependTo(target) {
             this.$().prependTo($($(target)[0]));
             this.__checkAppended();
             return this;
-        },
-        insertAfter: function(target) {
+        }
+        insertAfter(target) {
             this.$().insertAfter($($(target)[0]));
             this.__checkAppended();
             return this;
-        },
-        insertBefore: function(target) {
+        }
+        insertBefore(target) {
             this.$().insertBefore($($(target)[0]));
             this.__checkAppended();
             return this;
-        },
-        replace: function(target) {
+        }
+        replace(target) {
             this.$().replaceAll($($(target)[0]));
             this.__checkAppended();
             return this;
-        },
-        detach: function() {
+        }
+        detach() {
             this.$().detach();
             this.__checkAppended();
             return this;
-        },
-        render: function() {
+        }
+        render() {
             return "";
-        },
-        getAppendedToDom: function() {
+        }
+        getAppendedToDom() {
             return this.__widgetAppended;
-        },
-        __checkAppended: function() {
+        }
+        __checkAppended() {
             var inHtml = $.contains(document, this.$()[0]);
             if (this.__widgetAppended === inHtml)
                 return;
@@ -261,7 +239,7 @@ function declare(document, _) {
     widget.getWidget = function(element) {
         return element.data("widgetWidget") || null;
     };
-*/
+
 
     return widget;
 }
