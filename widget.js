@@ -134,23 +134,23 @@ function declare(document, _) {
         constructor(parent) {
             super(parent);
             this.__widgetAppended = false;
-            this.__widgetElement = $("<" + this.tagName() + ">");
-            this.el.addClass(this.className());
+            this.__widgetElement = $("<" + this.tagName() + ">")[0];
+            this.$().addClass(this.className());
             _.each(this.attributes(), _.bind(function(val, key) {
-                this.el.attr(key, val);
+                this.$().attr(key, val);
             }, this));
-            this.el.data("widgetWidget", this);
+            this.$().data("widgetWidget", this);
     
-            this.el.html(this.render());
+            this.$().html(this.render());
         }
         get el() {
             return this.__widgetElement;
         }
         $(attr) {
             if (attr)
-                return this.el.find.apply(this.el, arguments);
+                return $(this.el).find.apply($(this.el), arguments);
             else
-                return this.el;
+                return $(this.el);
         }
         destroy() {
             this.trigger("destroying");
@@ -158,36 +158,36 @@ function declare(document, _) {
                 el.destroy();
             });
             this.off();
-            this.el.remove();
+            this.$().remove();
             super.destroy();
         }
         appendTo(target) {
-            this.el.appendTo($($(target)[0]));
+            this.$().appendTo($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         prependTo(target) {
-            this.el.prependTo($($(target)[0]));
+            this.$().prependTo($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         insertAfter(target) {
-            this.el.insertAfter($($(target)[0]));
+            this.$().insertAfter($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         insertBefore(target) {
-            this.el.insertBefore($($(target)[0]));
+            this.$().insertBefore($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         replace(target) {
-            this.el.replaceAll($($(target)[0]));
+            this.$().replaceAll($($(target)[0]));
             this.__checkAppended();
             return this;
         }
         detach() {
-            this.el.detach();
+            this.$().detach();
             this.__checkAppended();
             return this;
         }
