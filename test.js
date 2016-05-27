@@ -3,13 +3,11 @@
 "use strict";
 
 if (typeof(module) !== "undefined") {
-    global.ring = require("ring");
     global.assert = require("assert");
-    global._ = require("underscore");
+    global._ = require("lodash");
     var jsdom = require("jsdom").jsdom;
     var doc = jsdom();
     var window = doc.parentWindow;
-    global.$ = require("jquery")(window);
     global.widget = require("./widget")(window);
 }
 
@@ -83,103 +81,8 @@ test("context", function() {
     assert.strictEqual(tmp, "test");
 });
 
-test("static events", function() {
-    var tmp = 0;
-    var Claz = ring.create(widget.EventDispatcher, {
-        events: {
-            testevent: function() {
-                tmp = 1;
-            }
-        }
-    });
-    var x = new Claz();
-    assert.equal(tmp, 0);
-    x.trigger("testevent");
-    assert.equal(tmp, 1);
-    
-    tmp = 0;
-    var tmp2 = 0;
-    var Claz2 = ring.create(Claz, {
-        events: {
-            testevent2: function() {
-                tmp2 = 1;
-            }
-        }
-    });
-    var y = new Claz2();
-    assert.equal(tmp, 0);
-    assert.equal(tmp2, 0);
-    y.trigger("testevent");
-    assert.equal(tmp, 1);
-    assert.equal(tmp2, 0);
-    y.trigger("testevent2");
-    assert.equal(tmp, 1);
-    assert.equal(tmp2, 1);
-});
-
-test("static events context", function() {
-    var tmp = null;
-    var Claz = ring.create(widget.EventDispatcher, {
-        events: {
-            test: "test"
-        },
-        test: function() {
-            tmp = this;
-        }
-    });
-    var x = new Claz();
-    x.trigger("test");
-    assert.strictEqual(tmp, x);
-});
 
 suite("Properties");
-
-test("base-accessors", function() {
-    var Claz = ring.create([widget.Properties], {
-        getStuff: function() {
-            return this.stuff;
-        },
-        setStuff: function(val) {
-            this.stuff = val;
-        }
-    });
-    var Claz2 = ring.create([Claz], {
-        getThing: function() {
-            return this.thing;
-        },
-        setThing: function(val) {
-            this.thing = val;
-        }
-    });
-    var x = new Claz();
-    x.set("stuff", "stuff");
-    assert.equal(x.stuff, "stuff");
-    assert.equal(x.getStuff(), "stuff");
-    assert.equal(x.get("stuff"), "stuff");
-    x = new Claz();
-    x.setStuff("stuff");
-    assert.equal(x.stuff, "stuff");
-    assert.equal(x.getStuff(), "stuff");
-    assert.equal(x.get("stuff"), "stuff");
-    x = new Claz2();
-    x.set("stuff", "stuff");
-    assert.equal(x.stuff, "stuff");
-    assert.equal(x.getStuff(), "stuff");
-    assert.equal(x.get("stuff"), "stuff");
-    x.set("thing", "thing");
-    assert.equal(x.thing, "thing");
-    assert.equal(x.getThing(), "thing");
-    assert.equal(x.get("thing"), "thing");
-    x = new Claz2();
-    x.setStuff("stuff");
-    assert.equal(x.stuff, "stuff");
-    assert.equal(x.getStuff(), "stuff");
-    assert.equal(x.get("stuff"), "stuff");
-    x.setThing("thing");
-    assert.equal(x.thing, "thing");
-    assert.equal(x.getThing(), "thing");
-    assert.equal(x.get("thing"), "thing");
-});
 
 test("base-dynamic", function() {
     var x = new widget.Properties();
@@ -207,7 +110,7 @@ test("change event only when changed", function() {
     x.set({"test": 3});
     assert.equal(exec1, false);
 });
-
+/*
 suite("Widget");
 
 test("base", function() {
@@ -318,5 +221,5 @@ test("appendEvents", function() {
     x.destroy();
     y.destroy();
 });
-
+*/
 })();

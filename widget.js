@@ -31,32 +31,29 @@ if (typeof(exports) !== "undefined") { // node
         if (! w.document) {
             throw new Error( "widget.js requires a window with a document" );
         }
-        var und = require("underscore");
-        var jq = require("jquery")(w);
-        var rg = require("ring");
-        return declare(w.document, jq, und, rg);
+        var _ = require("lodash");
+        return declare(w.document, _);
     };
 } else { // define global variable 'widget'
-    window.widget = declare(window.document, $, _, ring);
+    window.widget = declare(window.document, _);
 }
 
-function declare(document, $, _, ring) {
+function declare(document, _) {
     var widget = {};
     widget.internal = {};
 
-    widget.LifeCycle = ring.create({
-        __lifeCycleMixin : true,
-        constructor: function(parent) {
-            this.$super();
+    widget.LifeCycle = class LifeCycle {
+        constructor(parent) {
+            this.__lifeCycleMixin = true;
             this.__lifeCycleChildren = [];
             this.__lifeCycleParent = null;
             this.__lifeCycleDestroyed = false;
             this.setParent(parent);
-        },
-        getDestroyed : function() {
+        }
+        getDestroyed() {
             return this.__lifeCycleDestroyed;
-        },
-        setParent : function(parent) {
+        }
+        setParent(parent) {
             if (this.getParent()) {
                 if (this.getParent().__lifeCycleMixin) {
                     this.getParent().__lifeCycleChildren = _.without(this
@@ -67,28 +64,28 @@ function declare(document, $, _, ring) {
             if (parent && parent.__lifeCycleMixin) {
                 parent.__lifeCycleChildren.push(this);
             }
-        },
-        getParent : function() {
+        }
+        getParent() {
             return this.__lifeCycleParent;
-        },
-        getChildren : function() {
+        }
+        getChildren() {
             return _.clone(this.__lifeCycleChildren);
-        },
-        destroy : function() {
+        }
+        destroy() {
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
             this.setParent(undefined);
             this.__lifeCycleDestroyed = true;
         }
-    });
+    }
 
     // (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
     // Backbone may be freely distributed under the MIT license.
     // For all details and documentation:
     // http://backbonejs.org
-    widget.internal.Events = ring.create({
-        on : function(events, callback, context) {
+    widget.internal.Events = class Events {
+        on(events, callback, context) {
             var ev;
             events = events.split(/\s+/);
             var calls = this._callbacks || (this._callbacks = {});
@@ -100,8 +97,8 @@ function declare(document, $, _, ring) {
                 list.tail = tail.next = {};
             }
             return this;
-        },
-        off : function(events, callback, context) {
+        }
+        off(events, callback, context) {
             var ev, calls, node;
             if (!events) {
                 delete this._callbacks;
@@ -121,8 +118,8 @@ function declare(document, $, _, ring) {
                 }
             }
             return this;
-        },
-        callbackList: function() {
+        }
+        callbackList() {
             var lst = [];
             _.each(this._callbacks || {}, function(el, eventName) {
                 var node = el;
@@ -131,8 +128,8 @@ function declare(document, $, _, ring) {
                 }
             });
             return lst;
-        },
-        trigger : function(events) {
+        }
+        trigger(events) {
             var event, node, calls, tail, args, all, rest;
             if (!(calls = this._callbacks))
                 return this;
@@ -163,64 +160,34 @@ function declare(document, $, _, ring) {
             }
             return this;
         }
-    });
+    };
     // end of Backbone's events class
-    
-    widget.EventDispatcher = ring.create({
-        events: {},
-        classInit: function(proto) {
-            var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("events").compact()
-                .reverse().value();
-            proto.__eventDispatcherStaticEvents = [];
-            _.each(eventsDicts, function(dct) {
-                _.each(dct, function(val, key) {
-                    proto.__eventDispatcherStaticEvents.push([key, val]);
-                });
-            });
-        },
-        constructor: function(parent) {
-            this.$super(parent);
+
+    widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
+        constructor(parent) {
+            super(parent);
             this.__edispatcherEvents = new widget.internal.Events();
-            _.each(this.__eventDispatcherStaticEvents, _.bind(function(el) {
-                this.on(el[0], typeof el[1] === "string" ? this[el[1]] : el[1], this);
-            }, this));
-        },
-        on: function(events, func, context) {
+        }
+        on(events, func, context) {
             this.__edispatcherEvents.on(events, func, context);
             return this;
-        },
-        off: function(events, func, context) {
+        }
+        off(events, func, context) {
             this.__edispatcherEvents.off(events, func, context);
             return this;
-        },
-        trigger: function() {
+        }
+        trigger() {
             this.__edispatcherEvents.trigger.apply(this.__edispatcherEvents, arguments);
             return this;
         }
-    });
-    
-    widget.Properties = widget.EventDispatcher.$extend({
-        classInit: function(proto) {
-            var flat = _.extend({}, proto);
-            var props = {};
-            _.each(flat, function(v, k) {
-                if (typeof v === "function") {
-                    var res = /^((?:get)|(?:set))([A-Z]\w*)$/.exec(k);
-                    if (! res)
-                        return;
-                    var name = res[2][0].toLowerCase() + res[2].slice(1);
-                    var prop = props[name] || (props[name] = {});
-                    prop[res[1]] = v;
-                }
-            });
-            proto.__properties = props;
-        },
-        constructor: function(parent) {
-            this.$super(parent);
+    }
+
+    widget.Properties = class Properties extends widget.EventDispatcher {
+        constructor(parent) {
+            super(parent);
             this.__dynamicProperties = {};
-        },
-        set: function(arg1, arg2) {
-            var self = this;
+        }
+        set(arg1, arg2) {
             var map;
             if (typeof arg1 === "string") {
                 map = {};
@@ -228,42 +195,22 @@ function declare(document, $, _, ring) {
             } else {
                 map = arg1;
             }
-            _.each(map, function(val, key) {
-                var prop = self.__properties[key];
-                if (prop) {
-                    if (! prop.set)
-                        throw new ring.ValueError("Property " + key + " does not have a setter method.");
-                    prop.set.call(self, val);
-                } else {
-                    self._fallbackSet(key, val);
-                }
-            });
-        },
-        get: function(key) {
-            var prop = this.__properties[key];
-            if (prop) {
-                if (! prop.get)
-                    throw new ring.ValueError("Property " + key + " does not have a getter method.");
-                return prop.get.call(this);
-            } else {
-                return this._fallbackGet(key);
-            }
-        },
-        _fallbackSet: function(key, val) {
-            var tmp = this.__dynamicProperties[key];
-            if (tmp === val)
-                return;
-            this.__dynamicProperties[key] = val;
-            this.trigger("change:" + key, this, {
-                oldValue: tmp,
-                newValue: val
-            });
-        },
-        _fallbackGet: function(key) {
+            _.each(map, _.bind(function(val, key) {
+                var tmp = this.__dynamicProperties[key];
+                if (tmp === val)
+                    return;
+                this.__dynamicProperties[key] = val;
+                this.trigger("change:" + key, this, {
+                    oldValue: tmp,
+                    newValue: val
+                });
+            }, this));
+        }
+        get(key) {
             return this.__dynamicProperties[key];
         }
-    });
-    
+    };
+/*
     widget.Widget = ring.create([widget.LifeCycle, widget.Properties], {
         tagName: 'div',
         className: '',
@@ -370,7 +317,7 @@ function declare(document, $, _, ring) {
     widget.getWidget = function(element) {
         return element.data("widgetWidget") || null;
     };
-
+*/
     return widget;
 }
 })();
