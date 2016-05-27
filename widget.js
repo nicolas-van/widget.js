@@ -95,8 +95,8 @@ function declare(document, _) {
                 }
             }
         }
-        dispatchEvent(event) {
-            var stack = this._listeners[event.type] || [];
+        dispatchEvent(event, overrideType) {
+            var stack = this._listeners[overrideType || event.type] || [];
             for(var i = 0, l = stack.length; i < l; i++) {
                 stack[i].call(this, event);
             }
@@ -194,7 +194,7 @@ function declare(document, _) {
                 var domCallback;
                 if (! res[2]) {
                     domCallback = function(e) {
-                        this.trigger(type, e);
+                        this.dispatchEvent(e, type);
                     }.bind(this);
                 } else {
                     domCallback = function(e) {
@@ -203,7 +203,7 @@ function declare(document, _) {
                             elem = elem.parentNode;
                         }
                         if (elem && elem !== this.el)
-                            this.trigger(type, e);
+                            this.dispatchEvent(e, type);
                     }.bind(this);
                 }
                 this.el.addEventListener(res[1], domCallback);

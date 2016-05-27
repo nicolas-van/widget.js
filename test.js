@@ -171,7 +171,7 @@ test("domEventsSimple", function() {
     var tmp = 0;
     x.on("dom:click", function(e) {
         assert.strictEqual(this, x);
-        assert.strictEqual(e.detail.target, x.el);
+        assert.strictEqual(e.target, x.el);
         tmp = 1;
     });
     x.el.click();
@@ -188,7 +188,7 @@ test("domEventsBubbling", function() {
     var tmp = 0;
     var event = function(e) {
         assert.strictEqual(this, x);
-        assert.strictEqual(e.detail.target, x.el.querySelector("button"));
+        assert.strictEqual(e.target, x.el.querySelector("button"));
         tmp = 1;
     };
     x.on("dom:click button", event);
@@ -204,7 +204,7 @@ test("domEventsBubbling", function() {
     tmp = 0;
     event = function(e) {
         assert.strictEqual(this, x);
-        assert.strictEqual(e.detail.target, x.el.querySelector("button"));
+        assert.strictEqual(e.target, x.el.querySelector("button"));
         tmp = 1;
     };
     x.on("dom:click p", event);
