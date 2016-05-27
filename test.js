@@ -15,20 +15,20 @@ suite("LifeCycle");
 
 test("base", function() {
     var x = new widget.LifeCycle();
-    assert.equal(!!x.getDestroyed(), false);
+    assert.equal(!!x.destroyed, false);
     x.destroy();
-    assert.equal(x.getDestroyed(), true);
+    assert.equal(x.destroyed, true);
 });
 
 test("parents", function() {
     var x = new widget.LifeCycle();
     var y = new widget.LifeCycle();
-    y.setParent(x);
-    assert.equal(y.getParent(), x);
-    assert.equal(x.getChildren()[0], y);
+    y.parent = x;
+    assert.equal(y.parent, x);
+    assert.equal(x.children[0], y);
     x.destroy();
-    assert.equal(x.getDestroyed(), true);
-    assert.equal(y.getDestroyed(), true);
+    assert.equal(x.destroyed, true);
+    assert.equal(y.destroyed, true);
 });
 
 suite("EventDispatcher");
@@ -106,7 +106,7 @@ test("base", function() {
     assert.strictEqual($el[0], $("span.mytestspan")[0]);
     
     var y = new Claz(x);
-    assert.strictEqual(y.getParent(), x);
+    assert.strictEqual(y.parent, x);
     
     x.destroy();
     $el = $("#testspan");

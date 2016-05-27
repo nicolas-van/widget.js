@@ -46,38 +46,35 @@ function declare(document, _) {
 
     widget.LifeCycle = class LifeCycle {
         constructor(parent) {
-            this.__lifeCycleMixin = true;
+            this.__lifeCycle = true;
             this.__lifeCycleChildren = [];
             this.__lifeCycleParent = null;
             this.__lifeCycleDestroyed = false;
-            this.setParent(parent);
+            this.parent = parent;
         }
-        getDestroyed() {
+        get destroyed() {
             return this.__lifeCycleDestroyed;
         }
-        setParent(parent) {
-            if (this.getParent()) {
-                if (this.getParent().__lifeCycleMixin) {
-                    this.getParent().__lifeCycleChildren = _.without(this
-                            .getParent().getChildren(), this);
-                }
+        set parent(parent) {
+            if (this.parent && this.parent.__lifeCycle) {
+                this.parent.__lifeCycleChildren = _.without(this.parent.children, this);
             }
             this.__lifeCycleParent = parent;
-            if (parent && parent.__lifeCycleMixin) {
+            if (parent && parent.__lifeCycle) {
                 parent.__lifeCycleChildren.push(this);
             }
         }
-        getParent() {
+        get parent() {
             return this.__lifeCycleParent;
         }
-        getChildren() {
+        get children() {
             return _.clone(this.__lifeCycleChildren);
         }
         destroy() {
-            _.each(this.getChildren(), function(el) {
+            _.each(this.children, function(el) {
                 el.destroy();
             });
-            this.setParent(undefined);
+            this.parent = undefined;
             this.__lifeCycleDestroyed = true;
         }
     }
@@ -148,7 +145,7 @@ function declare(document, _) {
         }
         destroy() {
             this.trigger("destroying");
-            _.each(this.getChildren(), function(el) {
+            _.each(this.children, function(el) {
                 el.destroy();
             });
             if (this.el.parentNode) {
