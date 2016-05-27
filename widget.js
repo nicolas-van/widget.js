@@ -149,9 +149,7 @@ function declare(document, _) {
             _.each(this.children, function(el) {
                 el.destroy();
             });
-            if (this.el.parentNode) {
-                this.el.parentNode.removeChild(this.el);
-            }
+            this.el.remove()
             super.destroy();
         }
         appendTo(target) {
