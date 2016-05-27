@@ -195,6 +195,10 @@ function declare(document, _) {
         get parent() {
             return super.parent;
         }
+        resetParent() {
+            this.__widgetExplicitParent = false;
+            this.__checkAppended();
+        }
         __checkAppended() {
             // check for parent change
             if (! this.__widgetExplicitParent) {

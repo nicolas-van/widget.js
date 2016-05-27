@@ -156,6 +156,14 @@ test("autoParent", function() {
     y.detach();
     assert.strictEqual(x.parent, null);
     assert.strictEqual(y.parent, null);
+    
+    var l = new widget.LifeCycle();
+    y.parent = l;
+    assert.strictEqual(y.parent, l);
+    y.appendTo(x.el.querySelector("div"));
+    assert.strictEqual(y.parent, l);
+    y.resetParent();
+    assert.strictEqual(y.parent, x);
 });
 
 })();
