@@ -79,108 +79,52 @@ function declare(document, _) {
             this.__lifeCycleDestroyed = true;
         }
     }
-
-    // (c) 2010-2012 Jeremy Ashkenas, DocumentCloud Inc.
-    // Backbone may be freely distributed under the MIT license.
-    // For all details and documentation:
-    // http://backbonejs.org
-    widget.internal.Events = class Events {
-        on(events, callback, context) {
-            var ev;
-            events = events.split(/\s+/);
-            var calls = this._callbacks || (this._callbacks = {});
-            while ((ev = events.shift())) {
-                var list = calls[ev] || (calls[ev] = {});
-                var tail = list.tail || (list.tail = list.next = {});
-                tail.callback = callback;
-                tail.context = context;
-                list.tail = tail.next = {};
+    
+    widget.EventTargetMixin = Base => class EventTarget extends Base {
+        constructor() {
+            super(...arguments);
+            this._listeners = [];
+        }
+        addEventListener(type, callback, key) {
+            key = key || callback;
+            (this._listeners[type] = this._listeners[type] || []).push([key, callback]);
+        }
+        removeEventListener(type, key) {
+            var stack = this._listeners[type] || [];
+            for (var i = 0, l = stack.length; i < l; i++){
+                if (stack[i][0] === key) {
+                    stack.splice(i, 1);
+                    return this.removeEventListener(type, key);
+                }
             }
+        }
+        dispatchEvent(event, args) {
+            args = args || [event];
+            var stack = this._listeners[event.type] || [];
+            event.target = this;
+            for(var i = 0, l = stack.length; i < l; i++) {
+                stack[i][1].apply(this, args);
+            }
+        }
+    };
+    
+    widget.EventDispatcher = class EventDispatcher extends widget.EventTargetMixin(widget.LifeCycle) {
+        constructor(parent) {
+            super(parent);
+        }
+        on(type, func, context) {
+            this.addEventListener(type, _.bind(func, context), func);
             return this;
         }
-        off(events, callback, context) {
-            var ev, calls, node;
-            if (!events) {
-                delete this._callbacks;
-            } else if ((calls = this._callbacks)) {
-                events = events.split(/\s+/);
-                while ((ev = events.shift())) {
-                    node = calls[ev];
-                    delete calls[ev];
-                    if (!callback || !node)
-                        continue;
-                    while ((node = node.next) && node.next) {
-                        if (node.callback === callback &&
-                                (!context || node.context === context))
-                            continue;
-                        this.on(ev, node.callback, node.context);
-                    }
-                }
-            }
+        off(type, func) {
+            this.removeEventListener(type, func);
             return this;
         }
-        callbackList() {
-            var lst = [];
-            _.each(this._callbacks || {}, function(el, eventName) {
-                var node = el;
-                while ((node = node.next) && node.next) {
-                    lst.push([eventName, node.callback, node.context]);
-                }
-            });
-            return lst;
-        }
-        trigger(events) {
-            var event, node, calls, tail, args, all, rest;
-            if (!(calls = this._callbacks))
-                return this;
-            all = calls.all;
-            (events = events.split(/\s+/)).push(null);
-            // Save references to the current heads & tails.
-            while ((event = events.shift())) {
-                if (all)
-                    events.push({
-                        next : all.next,
-                        tail : all.tail,
-                        event : event
-                    });
-                if (!(node = calls[event]))
-                    continue;
-                events.push({
-                    next : node.next,
-                    tail : node.tail
-                });
-            }
-            rest = Array.prototype.slice.call(arguments, 1);
-            while ((node = events.pop())) {
-                tail = node.tail;
-                args = node.event ? [ node.event ].concat(rest) : rest;
-                while ((node = node.next) !== tail) {
-                    node.callback.apply(node.context, args);
-                }
-            }
+        trigger(type, ...rest) {
+            this.dispatchEvent({type: type}, rest);
             return this;
         }
     };
-    // end of Backbone's events class
-
-    widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
-        constructor(parent) {
-            super(parent);
-            this.__edispatcherEvents = new widget.internal.Events();
-        }
-        on(events, func, context) {
-            this.__edispatcherEvents.on(events, func, context);
-            return this;
-        }
-        off(events, func, context) {
-            this.__edispatcherEvents.off(events, func, context);
-            return this;
-        }
-        trigger() {
-            this.__edispatcherEvents.trigger.apply(this.__edispatcherEvents, arguments);
-            return this;
-        }
-    }
 
     widget.Properties = class Properties extends widget.EventDispatcher {
         constructor(parent) {
@@ -211,11 +155,11 @@ function declare(document, _) {
         }
     };
 /*
-    widget.Widget = ring.create([widget.LifeCycle, widget.Properties], {
-        tagName: 'div',
-        className: '',
-        attributes: {},
-        domEvents: {},
+    widget.Widget = class Widget extends widget.Properties {
+        tagName() { return 'div'; }
+        className() { return ''; }
+        attributes() { return {}; }
+        domEvents() { return {}; }
         classInit: function(proto) {
             var eventsDicts = _.chain(proto.constructor.__mro__).pluck("__properties__").pluck("domEvents").compact()
                 .reverse().value();
@@ -312,12 +256,13 @@ function declare(document, _) {
                 $(this).data("widgetWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
         }
-    });
+    };
     
     widget.getWidget = function(element) {
         return element.data("widgetWidget") || null;
     };
 */
+
     return widget;
 }
 })();

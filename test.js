@@ -31,22 +31,6 @@ test("parents", function() {
     assert.equal(y.getDestroyed(), true);
 });
 
-suite("Events");
-
-test("base", function() {
-    var x = new widget.internal.Events();
-    var tmp = 0;
-    var fct = function() {tmp = 1;};
-    x.on("test", fct);
-    assert.equal(tmp, 0);
-    x.trigger("test");
-    assert.equal(tmp, 1);
-    tmp = 0;
-    x.off("test", fct);
-    x.trigger("test");
-    assert.equal(tmp, 0);
-});
-
 suite("EventDispatcher");
 
 test("base", function() {
