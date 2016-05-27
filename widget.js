@@ -39,6 +39,7 @@ if (typeof(exports) !== "undefined") { // node
 }
 
 function declare(document, _) {
+    var Event = document.createEvent("Event").constructor;
     var CustomEvent = document.createEvent("CustomEvent").constructor;
     
     var widget = {};
@@ -191,7 +192,7 @@ function declare(document, _) {
         }
         __checkAppended() {
             var inHtml = document.contains(this.el);
-            if (this.__widgetAppended === inHtml)
+            if (this.appendedToDom === inHtml)
                 return;
             this.__widgetAppended = inHtml;
             this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
