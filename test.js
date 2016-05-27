@@ -138,9 +138,24 @@ test("appendEvents", function() {
     x.destroy();
     y.destroy();
 });
-/*
+
 test("autoParent", function() {
+    class Claz extends widget.Widget {
+        render() {
+            return "<div></div>";
+        }
+    }
+    var x = new Claz();
+    assert.strictEqual(x.parent, null);
+    var y = new widget.Widget();
+    assert.strictEqual(y.parent, null);
     
+    y.appendTo(x.el.querySelector("div"));
+    assert.strictEqual(x.parent, null);
+    assert.strictEqual(y.parent, x);
+    y.detach();
+    assert.strictEqual(x.parent, null);
+    assert.strictEqual(y.parent, null);
 });
-*/
+
 })();

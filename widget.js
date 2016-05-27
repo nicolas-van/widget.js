@@ -199,10 +199,10 @@ function declare(document, _) {
             // check for parent change
             if (! this.__widgetExplicitParent) {
                 var parent = this.el.parentNode;
-                while (parent && ! (parent.dataset && parent.dataset.__widget_Widget)) {
+                while (parent && ! (parent.dataset && parent.dataset.__widget !== undefined)) {
                     parent = parent.parentNode;
                 }
-                parent = widget.getWidget(parent);
+                parent = parent ? widget.getWidget(parent) : null;
                 if (parent !== this.parent) {
                     this.parent = parent;
                     this.__widgetExplicitParent = false;
@@ -223,7 +223,7 @@ function declare(document, _) {
     };
     
     widget.getWidget = function(element) {
-        return element ? element.__widget_Widget || null : null;
+        return element.__widget_Widget;
     };
 
 
