@@ -32,14 +32,13 @@ if (typeof(exports) !== "undefined") { // node
             throw new Error( "widget.js requires a window with a document" );
         }
         var _ = require("lodash");
-        var jquery = require("jquery")(w);
-        return declare(w.document, _, jquery);
+        return declare(w.document, _);
     };
 } else { // define global variable 'widget'
-    window.widget = declare(window.document, _, $);
+    window.widget = declare(window.document, _);
 }
 
-function declare(document, _, $) {
+function declare(document, _) {
     var CustomEvent = document.createEvent("CustomEvent").constructor;
     
     var widget = {};
@@ -140,17 +139,12 @@ function declare(document, _, $) {
             _.each(_.filter(this.className().split(" "), (name) => name !== ""), name => this.el.classList.add(name));
             _.each(this.attributes(), (val, key) => this.el.setAttribute(key, val));
             this.el.__widget_Widget = this;
+            this.el.dataset.__widget = "";
     
-            this.el.innerHtml = this.render();
+            this.el.innerHTML = this.render();
         }
         get el() {
             return this.__widgetElement;
-        }
-        $(attr) {
-            if (attr)
-                return $(this.el).find.apply($(this.el), arguments);
-            else
-                return $(this.el);
         }
         destroy() {
             this.trigger("destroying");
@@ -163,32 +157,32 @@ function declare(document, _, $) {
             super.destroy();
         }
         appendTo(target) {
-            this.$().appendTo($($(target)[0]));
+            target.insertBefore(this.el, null);
             this.__checkAppended();
             return this;
         }
         prependTo(target) {
-            this.$().prependTo($($(target)[0]));
+            target.insertBefore(this.el, target.firstChild);
             this.__checkAppended();
             return this;
         }
         insertAfter(target) {
-            this.$().insertAfter($($(target)[0]));
+            target.parentNode.insertBefore(this.el, target.nextSibling);
             this.__checkAppended();
             return this;
         }
         insertBefore(target) {
-            this.$().insertBefore($($(target)[0]));
+            target.parentNode.insertBefore(this.el, target);
             this.__checkAppended();
             return this;
         }
         replace(target) {
-            this.$().replaceAll($($(target)[0]));
+            target.parentNode.replaceChild(this.el, target);
             this.__checkAppended();
             return this;
         }
         detach() {
-            this.$().detach();
+            this.el.remove();
             this.__checkAppended();
             return this;
         }
@@ -199,20 +193,20 @@ function declare(document, _, $) {
             return this.__widgetAppended;
         }
         __checkAppended() {
-            var inHtml = $.contains(document, this.$()[0]);
+            var inHtml = document.contains(this.el);
             if (this.__widgetAppended === inHtml)
                 return;
             this.__widgetAppended = inHtml;
-            this.trigger(inHtml ? "appendedToDom" : "removedFrgomDom");
-            this.$("*").filter(function() { return widget.getWidget($(this)); }).each(function() {
-                this.__widget_Widget.__widgetAppended = inHtml;
-                this.__widget_Widget.trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            _.each(this.el.querySelectorAll("[data-__widget]"), function(el) {
+                widget.getWidget(el).__widgetAppended = inHtml;
+                widget.getWidget(el).trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
         }
     };
     
     widget.getWidget = function(element) {
-        return element[0].__widget_Widget || null;
+        return element.__widget_Widget || null;
     };
 
 
