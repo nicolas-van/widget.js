@@ -49,22 +49,6 @@ test("base", function() {
     x.on("test", fct);
 });
 
-test("context", function() {
-    var x = new widget.EventDispatcher();
-    var tmp = null;
-    x.on("test", function() {
-        tmp = this;
-    });
-    x.trigger("test");
-    assert.strictEqual(tmp, undefined);
-    tmp = null;
-    x.on("test2", function() {
-        tmp = this;
-    }, "test");
-    x.trigger("test2");
-    assert.strictEqual(tmp, "test");
-});
-
 suite("Widget");
 
 test("base", function() {

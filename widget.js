@@ -39,7 +39,9 @@ if (typeof(exports) !== "undefined") { // node
     window.widget = declare(window.document, _, $);
 }
 
-function declare(document, _) {
+function declare(document, _, $) {
+    var CustomEvent = document.createEvent("CustomEvent").constructor;
+    
     var widget = {};
     widget.internal = {};
 
@@ -81,49 +83,49 @@ function declare(document, _) {
         }
     }
     
-    widget.EventTargetMixin = Base => class EventTarget extends Base {
-        constructor() {
-            super(...arguments);
+    widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
+        constructor(parent) {
+            super(parent);
             this._listeners = [];
         }
-        addEventListener(type, callback, key) {
-            key = key || callback;
-            (this._listeners[type] = this._listeners[type] || []).push([key, callback]);
+        addEventListener(type, callback) {
+            (this._listeners[type] = this._listeners[type] || []).push(callback);
         }
-        removeEventListener(type, key) {
+        removeEventListener(type, callback) {
             var stack = this._listeners[type] || [];
-            for (var i = 0, l = stack.length; i < l; i++){
-                if (stack[i][0] === key) {
+            for (var i = 0; i < stack.length; i++){
+                if (stack[i] === callback) {
                     stack.splice(i, 1);
-                    return this.removeEventListener(type, key);
+                    return this.removeEventListener(type, callback);
                 }
             }
         }
-        dispatchEvent(event, args) {
-            args = args || [event];
+        dispatchEvent(event) {
             var stack = this._listeners[event.type] || [];
-            event.target = this;
             for(var i = 0, l = stack.length; i < l; i++) {
-                stack[i][1].apply(this, args);
+                stack[i].call(this, event);
             }
         }
-    };
-    
-    widget.EventDispatcher = class EventDispatcher extends widget.EventTargetMixin(widget.LifeCycle) {
-        constructor(parent) {
-            super(parent);
-        }
-        on(type, func, context) {
-            this.addEventListener(type, _.bind(func, context), func);
+        on(type, func) {
+            this.addEventListener(type, func);
             return this;
         }
         off(type, func) {
             this.removeEventListener(type, func);
             return this;
         }
-        trigger(type, ...rest) {
-            this.dispatchEvent({type: type}, rest);
+        trigger(arg1, arg2) {
+            if (arg1 instanceof Event) {
+                this.dispatchEvent(arg1);
+            } else {
+                var ev = new CustomEvent(arg1, {detail: arg2});
+                this.dispatchEvent(ev);
+            }
             return this;
+        }
+        destroy() {
+            this._listeners = [];
+            super.destroy();
         }
     };
 
@@ -134,14 +136,12 @@ function declare(document, _) {
         constructor(parent) {
             super(parent);
             this.__widgetAppended = false;
-            this.__widgetElement = $("<" + this.tagName() + ">")[0];
-            this.$().addClass(this.className());
-            _.each(this.attributes(), _.bind(function(val, key) {
-                this.$().attr(key, val);
-            }, this));
-            this.$().data("widgetWidget", this);
+            this.__widgetElement = document.createElement(this.tagName());
+            _.each(_.filter(this.className().split(" "), (name) => name !== ""), name => this.el.classList.add(name));
+            _.each(this.attributes(), (val, key) => this.el.setAttribute(key, val));
+            this.el.__widget_Widget = this;
     
-            this.$().html(this.render());
+            this.el.innerHtml = this.render();
         }
         get el() {
             return this.__widgetElement;
@@ -157,8 +157,9 @@ function declare(document, _) {
             _.each(this.getChildren(), function(el) {
                 el.destroy();
             });
-            this.off();
-            this.$().remove();
+            if (this.el.parentNode) {
+                this.el.parentNode.removeChild(this.el);
+            }
             super.destroy();
         }
         appendTo(target) {
@@ -202,16 +203,16 @@ function declare(document, _) {
             if (this.__widgetAppended === inHtml)
                 return;
             this.__widgetAppended = inHtml;
-            this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
+            this.trigger(inHtml ? "appendedToDom" : "removedFrgomDom");
             this.$("*").filter(function() { return widget.getWidget($(this)); }).each(function() {
-                $(this).data("widgetWidget").__widgetAppended = inHtml;
-                $(this).data("widgetWidget").trigger(inHtml ? "appendedToDom" : "removedFromDom");
+                this.__widget_Widget.__widgetAppended = inHtml;
+                this.__widget_Widget.trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
         }
     };
     
     widget.getWidget = function(element) {
-        return element.data("widgetWidget") || null;
+        return element[0].__widget_Widget || null;
     };
 
 
