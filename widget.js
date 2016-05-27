@@ -46,12 +46,11 @@ function declare(document, _) {
     widget.internal = {};
 
     widget.LifeCycle = class LifeCycle {
-        constructor(parent) {
+        constructor() {
             this.__lifeCycle = true;
             this.__lifeCycleChildren = [];
             this.__lifeCycleParent = null;
             this.__lifeCycleDestroyed = false;
-            this.parent = parent;
         }
         get destroyed() {
             return this.__lifeCycleDestroyed;
@@ -81,8 +80,8 @@ function declare(document, _) {
     }
     
     widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
-        constructor(parent) {
-            super(parent);
+        constructor() {
+            super();
             this._listeners = [];
         }
         addEventListener(type, callback) {
@@ -130,9 +129,10 @@ function declare(document, _) {
         tagName() { return 'div'; }
         className() { return ''; }
         attributes() { return {}; }
-        constructor(parent) {
-            super(parent);
+        constructor() {
+            super();
             this.__widgetAppended = false;
+            this.__widgetExplicitParent = false;
             this.__widgetElement = document.createElement(this.tagName());
             _.each(_.filter(this.className().split(" "), (name) => name !== ""), name => this.el.classList.add(name));
             _.each(this.attributes(), (val, key) => this.el.setAttribute(key, val));
@@ -188,7 +188,28 @@ function declare(document, _) {
         get appendedToDom() {
             return this.__widgetAppended;
         }
+        set parent(parent) {
+            super.parent = parent;
+            this.__widgetExplicitParent = true;
+        }
+        get parent() {
+            return super.parent;
+        }
         __checkAppended() {
+            // check for parent change
+            if (! this.__widgetExplicitParent) {
+                var parent = this.el.parentNode;
+                while (parent && ! (parent.dataset && parent.dataset.__widget_Widget)) {
+                    parent = parent.parentNode;
+                }
+                parent = widget.getWidget(parent);
+                if (parent !== this.parent) {
+                    this.parent = parent;
+                    this.__widgetExplicitParent = false;
+                }
+            }
+            
+            // update appendedToDom and propagate to all sub elements
             var inHtml = document.contains(this.el);
             if (this.appendedToDom === inHtml)
                 return;
@@ -202,7 +223,7 @@ function declare(document, _) {
     };
     
     widget.getWidget = function(element) {
-        return element.__widget_Widget || null;
+        return element ? element.__widget_Widget || null : null;
     };
 
 

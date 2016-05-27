@@ -105,7 +105,8 @@ test("base", function() {
     assert.strictEqual($el.html(), "test");
     assert.strictEqual($el[0], $("span.mytestspan")[0]);
     
-    var y = new Claz(x);
+    var y = new Claz();
+    y.parent = x;
     assert.strictEqual(y.parent, x);
     
     x.destroy();
@@ -137,5 +138,9 @@ test("appendEvents", function() {
     x.destroy();
     y.destroy();
 });
-
+/*
+test("autoParent", function() {
+    
+});
+*/
 })();
