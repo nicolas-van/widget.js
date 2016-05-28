@@ -40,9 +40,14 @@ module.exports = function(grunt) {
                 sourceMap: true,
                 presets: ['es2015'],
             },
-            dist: {
+            main: {
                 files: {
                     'widget.babelized.js': 'widget.js'
+                }
+            },
+            tests: {
+                files: {
+                    'test.babelized.js': 'test.js'
                 }
             }
         }
@@ -54,8 +59,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-babel');
     
-    grunt.registerTask('gen', ['babel']);
+    grunt.registerTask('gen', ['jshint', 'babel']);
 
-    grunt.registerTask('default', ['gen', 'jshint'/*, "mocha", "mochaTest"*/]);
+    grunt.registerTask('default', ['gen'/*, "mocha", "mochaTest"*/]);
 
 };

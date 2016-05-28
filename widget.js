@@ -38,8 +38,26 @@ if (typeof(exports) !== "undefined") { // node
 }
 
 function declare(document) {
-    var Event = document.createEvent("Event").constructor;
-    var CustomEvent = document.createEvent("CustomEvent").constructor;
+    function createCustomEvent(type, detail) {
+        if (typeof CustomEvent === "function") {
+            return new CustomEvent(type, {detail: detail});
+        } else {
+            var e = document.createEvent("CustomEvent");
+            e.initCustomEvent(type, false, false, detail);
+            return e;
+        }
+    }
+    
+    function matches(elm, selector) {
+        if (elm.matches)
+            return elm.matches(selector);
+        if (elm.matchesSelector)
+            return elm.matchesSelector(selector);
+        var matches = (elm.document || elm.ownerDocument).querySelectorAll(selector),
+            i = matches.length;
+        while (--i >= 0 && matches.item(i) !== elm) {}
+        return i > -1;
+    }
     
     var widget = {};
     widget.internal = {};
@@ -112,7 +130,7 @@ function declare(document) {
             if (arg1 instanceof Event) {
                 this.dispatchEvent(arg1);
             } else {
-                var ev = new CustomEvent(arg1, {detail: arg2});
+                var ev = createCustomEvent(arg1, arg2);
                 this.dispatchEvent(ev);
             }
             return this;
@@ -149,7 +167,8 @@ function declare(document) {
             this.children.forEach(function(el) {
                 el.destroy();
             });
-            this.el.remove();
+            if (this.el.parentNode)
+                this.el.parentNode.removeChild(this.el);
             super.destroy();
         }
         appendTo(target) {
@@ -178,7 +197,8 @@ function declare(document) {
             return this;
         }
         detach() {
-            this.el.remove();
+            if (this.el.parentNode)
+                this.el.parentNode.removeChild(this.el);
             this.__checkAppended();
             return this;
         }
@@ -199,7 +219,7 @@ function declare(document) {
                 } else {
                     domCallback = function(e) {
                         var elem = e.target;
-                        while (elem && elem !== this.el && ! elem.matches(res[2])) {
+                        while (elem && elem !== this.el && ! matches(elem, res[2])) {
                             elem = elem.parentNode;
                         }
                         if (elem && elem !== this.el)
@@ -254,7 +274,7 @@ function declare(document) {
             }
             
             // update appendedToDom and propagate to all sub elements
-            var inHtml = document.contains(this.el);
+            var inHtml = document.body.contains(this.el);
             if (this.appendedToDom === inHtml)
                 return;
             this.__widgetAppended = inHtml;
