@@ -347,6 +347,19 @@ function declare(document) {
     });
     widget.Widget = Widget;
     
+    var ready = function(callback) {
+        if (document.readyState === "complete") {
+            callback();
+        } else {
+            var c = function() {
+                document.removeEventListener("DOMContentLoaded", c);
+                callback();
+            };
+            document.addEventListener("DOMContentLoaded", c);
+        }
+    };
+    widget.ready = ready;
+    
     return widget;
 }
 })();

@@ -252,4 +252,12 @@ test("domEventsBubbling", function() {
     x.destroy();
 });
 
+$(function() {
+    test("ready", function() {
+        var tmp = 0;
+        widget.ready(function() { tmp = 1; });
+        assert.strictEqual(tmp, 1);
+    });
+})
+
 })();
