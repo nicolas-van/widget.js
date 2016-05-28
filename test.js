@@ -44,8 +44,29 @@ test("base", function() {
     x.off("test", fct);
     x.trigger("test");
     assert.equal(tmp, 0);
+    
     tmp = 0;
-    x.on("test", fct);
+    var tmp2 = 0;
+    var events = {
+        test: fct,
+        test2: function() { tmp2 = 1; },
+    };
+    x.on(events);
+    x.trigger("test");
+    assert.strictEqual(tmp, 1);
+    assert.strictEqual(tmp2, 0);
+    tmp = 0;
+    x.trigger("test2");
+    assert.strictEqual(tmp, 0);
+    assert.strictEqual(tmp2, 1)
+    tmp2 = 0;
+    x.off(events);
+    x.trigger("test");
+    assert.strictEqual(tmp, 0);
+    assert.strictEqual(tmp2, 0);
+    x.trigger("test2");
+    assert.strictEqual(tmp, 0);
+    assert.strictEqual(tmp2, 0);
 });
 
 suite("Widget");

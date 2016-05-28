@@ -68,7 +68,7 @@ function declare(document) {
     
     var widget = {};
     
-    var Inheritable = function Inheritable() {}
+    var Inheritable = function Inheritable() {};
     Inheritable.extend = function(protoProps) {
         var parent = this;
         var child;
@@ -152,12 +152,28 @@ function declare(document) {
                 stack[i].call(this, event);
             }
         },
-        on: function(type, func) {
-            this.addEventListener(type, func);
+        on: function(arg1, arg2) {
+            var events = {};
+            if (typeof arg1 === "string") {
+                events[arg1] = arg2;
+            } else {
+                events = arg1;
+            }
+            for (var key in events) {
+                this.addEventListener(key, events[key]);
+            }
             return this;
         },
-        off: function(type, func) {
-            this.removeEventListener(type, func);
+        off: function(arg1, arg2) {
+            var events = {};
+            if (typeof arg1 === "string") {
+                events[arg1] = arg2;
+            } else {
+                events = arg1;
+            }
+            for (var key in events) {
+                this.removeEventListener(key, events[key]);
+            }
             return this;
         },
         trigger: function(arg1, arg2) {
@@ -175,6 +191,11 @@ function declare(document) {
         },
     });
     widget.EventDispatcher = EventDispatcher;
+    
+    var getWidget = function(element) {
+        return element.__widgetWidget;
+    };
+    widget.getWidget = getWidget;
 
     var Widget = EventDispatcher.extend({
         get tagName() { return 'div'; },
@@ -325,11 +346,6 @@ function declare(document) {
         },
     });
     widget.Widget = Widget;
-    
-    var getWidget = function(element) {
-        return element.__widgetWidget;
-    };
-    widget.getWidget = getWidget;
     
     return widget;
 }
