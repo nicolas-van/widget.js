@@ -167,6 +167,7 @@ test("autoParent", function() {
 
 test("domEventsSimple", function() {
     var x = new widget.Widget();
+    x.appendTo($("body")[0]);
     var tmp = 0;
     x.on("dom:click", function(e) {
         assert.strictEqual(this, x);
@@ -175,6 +176,7 @@ test("domEventsSimple", function() {
     });
     x.el.click();
     assert.strictEqual(tmp, 1);
+    x.destroy();
 });
 
 test("domEventsBubbling", function() {
@@ -184,7 +186,7 @@ test("domEventsBubbling", function() {
         },
     });
     var x = new Claz();
-    x.appendTo($("body")[0]); // only for Safari which handles click events in an odd way
+    x.appendTo($("body")[0]);
     var tmp = 0;
     var event = function(e) {
         assert.strictEqual(this, x);

@@ -59,98 +59,107 @@ function declare(document) {
         return i > -1;
     }
     
+    function addClass(el, name) {
+        if (el.classList)
+            el.classList.add(name);
+        else
+            el.className += " " + name;
+    }
+    
     var widget = {};
     widget.internal = {};
     
-    widget.Inheritable = class Inheritable {
-        static extend(protoProps) {
-            var parent = this;
-            var child;
-            if (protoProps && protoProps.hasOwnProperty('constructor')) {
-                child = protoProps.constructor;
-            } else {
-                child = function() { return parent.apply(this, arguments); };
-            }
-            for (var key in parent) {
-                if (parent.hasOwnProperty(key)) {
-                    child[key] = parent[key];
-                } 
-            }
-            child.prototype = Object.create(parent.prototype);
-            for (var key2 in protoProps) {
-                child.prototype[key2] = protoProps[key2];
-            }
-            child.prototype.constructor = child;
-            return child;
+    widget.Inheritable = function Inheritable() {};
+    widget.Inheritable.extend = function(protoProps) {
+        var parent = this;
+        var child;
+        if (protoProps && protoProps.hasOwnProperty('constructor')) {
+            child = protoProps.constructor;
+        } else {
+            child = function() { return parent.apply(this, arguments); };
         }
+        for (var key in parent) {
+            if (! parent.hasOwnProperty(key))
+                continue;
+            child[key] = parent[key];
+        }
+        child.prototype = Object.create(parent.prototype);
+        for (var key2 in protoProps) {
+            var desc = Object.getOwnPropertyDescriptor(protoProps, key2);
+            Object.defineProperty(child.prototype, key2, desc);
+        }
+        child.prototype.constructor = child;
+        return child;
     };
 
-    widget.LifeCycle = class LifeCycle extends widget.Inheritable {
-        constructor() {
-            super();
+    widget.LifeCycle = widget.Inheritable.extend({
+        constructor: function LifeCycle() {
+            widget.Inheritable.apply(this, arguments);
             this.__lifeCycle = true;
             this.__lifeCycleChildren = [];
             this.__lifeCycleParent = null;
             this.__lifeCycleDestroyed = false;
-        }
+        },
         get destroyed() {
             return this.__lifeCycleDestroyed;
-        }
+        },
         set parent(parent) {
             if (this.parent && this.parent.__lifeCycle) {
-                this.parent.__lifeCycleChildren = this.parent.children.filter((el) => el !== this);
+                this.parent.__lifeCycleChildren = this.parent.children.filter(function(el) {
+                    return el !== this;
+                }.bind(this));
             }
             this.__lifeCycleParent = parent;
             if (parent && parent.__lifeCycle) {
                 parent.__lifeCycleChildren.push(this);
             }
-        }
+        },
         get parent() {
             return this.__lifeCycleParent;
-        }
+        },
         get children() {
             return this.__lifeCycleChildren.slice();
-        }
-        destroy() {
+        },
+        destroy: function() {
             this.children.forEach(function(el) {
                 el.destroy();
             });
             this.parent = undefined;
             this.__lifeCycleDestroyed = true;
-        }
-    };
+        },
+    });
     
-    widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
-        constructor() {
-            super();
+    widget.EventDispatcher = widget.LifeCycle.extend({
+        constructor: function EventDispatcher() {
+            widget.LifeCycle.call(this, arguments);
             this._listeners = [];
-        }
-        addEventListener(type, callback) {
+        },
+        addEventListener: function(type, callback) {
             (this._listeners[type] = this._listeners[type] || []).push(callback);
-        }
-        removeEventListener(type, callback) {
+        },
+        removeEventListener: function(type, callback) {
             var stack = this._listeners[type] || [];
             for (var i = 0; i < stack.length; i++){
                 if (stack[i] === callback) {
                     stack.splice(i, 1);
                 }
             }
-        }
-        dispatchEvent(event, overrideType) {
+        },
+        dispatchEvent: function(event, overrideType) {
             var stack = this._listeners[overrideType || event.type] || [];
             for(var i = 0, l = stack.length; i < l; i++) {
                 stack[i].call(this, event);
             }
-        }
-        on(type, func) {
+        },
+        on: function(type, func) {
             this.addEventListener(type, func);
             return this;
-        }
-        off(type, func) {
+        },
+        off: function(type, func) {
             this.removeEventListener(type, func);
             return this;
-        }
-        trigger(arg1, arg2) {
+        },
+        trigger: function(arg1, arg2) {
             if (arg1 instanceof Event) {
                 this.dispatchEvent(arg1);
             } else {
@@ -158,82 +167,84 @@ function declare(document) {
                 this.dispatchEvent(ev);
             }
             return this;
-        }
-        destroy() {
+        },
+        destroy: function() {
             this._listeners = [];
-            super.destroy();
-        }
-    };
+            widget.LifeCycle.prototype.destroy.call(this);
+        },
+    });
 
-    widget.Widget = class Widget extends widget.EventDispatcher {
-        tagName() { return 'div'; }
-        className() { return ''; }
-        attributes() { return {}; }
-        constructor() {
-            super();
+    widget.Widget = widget.EventDispatcher.extend({
+        tagName: function() { return 'div'; },
+        className: function() { return ''; },
+        attributes: function() { return {}; },
+        constructor: function Widget() {
+            widget.EventDispatcher.call(this, arguments);
             this.__widgetAppended = false;
             this.__widgetExplicitParent = false;
             this.__widgetDomEvents = {};
             this.__widgetElement = document.createElement(this.tagName());
-            this.className().split(" ").filter((name) => name !== "").forEach(name => this.el.classList.add(name));
+            this.className().split(" ").filter(function(name) { return name !== ""; }).forEach(function(name) {
+                return addClass(this.el, name);
+            }.bind(this));
             var atts = this.attributes();
             for (var key in atts) this.el.setAttribute(key, atts[key]);
             this.el.__widgetWidget = this;
             this.el.setAttribute("data-__widget", "");
     
             this.el.innerHTML = this.render();
-        }
+        },
         get el() {
             return this.__widgetElement;
-        }
-        destroy() {
+        },
+        destroy: function() {
             this.trigger("destroying");
             this.children.forEach(function(el) {
                 el.destroy();
             });
             if (this.el.parentNode)
                 this.el.parentNode.removeChild(this.el);
-            super.destroy();
-        }
-        appendTo(target) {
+            widget.EventDispatcher.prototype.destroy.call(this);
+        },
+        appendTo: function(target) {
             target.appendChild(this.el);
             this.__checkAppended();
             return this;
-        }
-        prependTo(target) {
+        },
+        prependTo: function(target) {
             target.insertBefore(this.el, target.firstChild);
             this.__checkAppended();
             return this;
-        }
-        insertAfter(target) {
+        },
+        insertAfter: function(target) {
             if (! target.nextSibling)
                 target.parentNode.appendChild(this.el);
             else 
                 target.parentNode.insertBefore(this.el, target.nextSibling);
             this.__checkAppended();
             return this;
-        }
-        insertBefore(target) {
+        },
+        insertBefore: function(target) {
             target.parentNode.insertBefore(this.el, target);
             this.__checkAppended();
             return this;
-        }
-        replace(target) {
+        },
+        replace: function(target) {
             target.parentNode.replaceChild(this.el, target);
             this.__checkAppended();
             return this;
-        }
-        detach() {
+        },
+        detach: function() {
             if (this.el.parentNode)
                 this.el.parentNode.removeChild(this.el);
             this.__checkAppended();
             return this;
-        }
-        render() {
+        },
+        render: function() {
             return "";
-        }
-        addEventListener(type, callback) {
-            super.addEventListener(type, callback);
+        },
+        addEventListener: function(type, callback) {
+            widget.EventDispatcher.prototype.addEventListener.call(this, type, callback);
             var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
             if (! res)
                 return;
@@ -258,9 +269,9 @@ function declare(document) {
             } else {
                 this.__widgetDomEvents[type][0] += 1;
             }
-        }
-        removeEventListener(type, callback) {
-            super.removeEventListener(type, callback);
+        },
+        removeEventListener: function(type, callback) {
+            widget.EventDispatcher.prototype.removeEventListener.call(this, type, callback);
             var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
             if (! res)
                 return;
@@ -271,22 +282,22 @@ function declare(document) {
                 this.el.removeEventListener(res[1], this.__widgetDomEvents[type][1]);
                 delete this.__widgetDomEvents[type];
             }
-        }
+        },
         get appendedToDom() {
             return this.__widgetAppended;
-        }
+        },
         set parent(parent) {
-            super.parent = parent;
+            Object.getOwnPropertyDescriptor(widget.LifeCycle.prototype, 'parent').set.call(this, parent);
             this.__widgetExplicitParent = true;
-        }
+        },
         get parent() {
-            return super.parent;
-        }
-        resetParent() {
+            return Object.getOwnPropertyDescriptor(widget.LifeCycle.prototype, 'parent').get.call(this);
+        },
+        resetParent: function() {
             this.__widgetExplicitParent = false;
             this.__checkAppended();
-        }
-        __checkAppended() {
+        },
+        __checkAppended: function() {
             // check for parent change
             if (! this.__widgetExplicitParent) {
                 var parent = this.el.parentNode;
@@ -310,13 +321,13 @@ function declare(document) {
                 widget.getWidget(el).__widgetAppended = inHtml;
                 widget.getWidget(el).trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });
-        }
-    };
+        },
+    });
     
     widget.getWidget = function(element) {
         return element.__widgetWidget;
     };
-
+    
     return widget;
 }
 })();
