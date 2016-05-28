@@ -8,18 +8,19 @@ A lightweight JavaScript component framework
 widget.js is a lightweight framework in JavaScript to separate web applications in multiples reusable components called
 widgets.
 
-    var MyWidget = widget.Widget.$extend({
-        render: function() {
-            return "<h1>Welcome to widget.js!</h1>";
-        },
-        domEvents: {
-            "click h1": function() {
+    class MyWidget extends widget.Widget {
+        constructor() {
+            super();
+            this.on("dom:click h1", function() {
                 window.location = "http://widgetjs.neoname.eu";
-            },
-        },
-    });
+            });
+        }
+        render() {
+            return "<h1>Welcome to widget.js!</h1>";
+        }
+    }
 
-    new MyWidget().appendTo($("body"));
+    new MyWidget().appendTo(document.body);
 
 [Read the documentation here](http://widgetjs.readthedocs.org/)
 
@@ -28,10 +29,10 @@ or routing, there already exists good libraries for that. widget.js only handles
 separation of visual components into independant entities. So it provides only features to serve that goal, namely
 widgets, lifecycle management and events.
 
-To install with its dependencies:
+To install:
 
     bower install widget
 
 License: MIT
 
-Supported browsers: IE up to IE7, all other major browsers up to N-1 version.
+Supported browsers: All major browsers as well as IE down to IE9.
