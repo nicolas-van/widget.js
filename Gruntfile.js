@@ -35,15 +35,27 @@ module.exports = function(grunt) {
                 }
             }
         },
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['es2015'],
+            },
+            dist: {
+                files: {
+                    'widget.babelized.js': 'widget.js'
+                }
+            }
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-babel');
+    
+    grunt.registerTask('gen', ['babel']);
 
-    grunt.registerTask('test', ['jshint'/*, "mocha", "mochaTest"*/]);
-
-    grunt.registerTask('default', ['test']);
+    grunt.registerTask('default', ['gen', 'jshint'/*, "mocha", "mochaTest"*/]);
 
 };
