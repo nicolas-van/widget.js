@@ -31,14 +31,13 @@ if (typeof(exports) !== "undefined") { // node
         if (! w.document) {
             throw new Error( "widget.js requires a window with a document" );
         }
-        var _ = require("lodash");
-        return declare(w.document, _);
+        return declare(w.document);
     };
 } else { // define global variable 'widget'
-    window.widget = declare(window.document, _);
+    window.widget = declare(window.document);
 }
 
-function declare(document, _) {
+function declare(document) {
     var Event = document.createEvent("Event").constructor;
     var CustomEvent = document.createEvent("CustomEvent").constructor;
     
@@ -57,7 +56,7 @@ function declare(document, _) {
         }
         set parent(parent) {
             if (this.parent && this.parent.__lifeCycle) {
-                this.parent.__lifeCycleChildren = _.without(this.parent.children, this);
+                this.parent.__lifeCycleChildren = this.parent.children.filter((el) => el !== this);
             }
             this.__lifeCycleParent = parent;
             if (parent && parent.__lifeCycle) {
@@ -68,10 +67,10 @@ function declare(document, _) {
             return this.__lifeCycleParent;
         }
         get children() {
-            return _.clone(this.__lifeCycleChildren);
+            return this.__lifeCycleChildren.slice();
         }
         destroy() {
-            _.each(this.children, function(el) {
+            this.children.forEach(function(el) {
                 el.destroy();
             });
             this.parent = undefined;
@@ -134,8 +133,9 @@ function declare(document, _) {
             this.__widgetExplicitParent = false;
             this.__widgetDomEvents = {};
             this.__widgetElement = document.createElement(this.tagName());
-            _.each(_.filter(this.className().split(" "), (name) => name !== ""), name => this.el.classList.add(name));
-            _.each(this.attributes(), (val, key) => this.el.setAttribute(key, val));
+            this.className().split(" ").filter((name) => name !== "").forEach(name => this.el.classList.add(name));
+            var atts = this.attributes();
+            for (var key in atts) this.el.setAttribute(key, atts[key]);
             this.el.__widget_Widget = this;
             this.el.dataset.__widget = "";
     
@@ -146,7 +146,7 @@ function declare(document, _) {
         }
         destroy() {
             this.trigger("destroying");
-            _.each(this.children, function(el) {
+            this.children.forEach(function(el) {
                 el.destroy();
             });
             this.el.remove()
@@ -259,7 +259,7 @@ function declare(document, _) {
                 return;
             this.__widgetAppended = inHtml;
             this.trigger(inHtml ? "appendedToDom" : "removedFromDom");
-            _.each(this.el.querySelectorAll("[data-__widget]"), function(el) {
+            Array.prototype.forEach.call(this.el.querySelectorAll("[data-__widget]"), function(el) {
                 widget.getWidget(el).__widgetAppended = inHtml;
                 widget.getWidget(el).trigger(inHtml ? "appendedToDom" : "removedFromDom");
             });

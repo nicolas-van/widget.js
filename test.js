@@ -4,7 +4,6 @@
 
 if (typeof(module) !== "undefined") {
     global.assert = require("assert");
-    global._ = require("lodash");
     var jsdom = require("jsdom").jsdom;
     var doc = jsdom();
     var window = doc.parentWindow;
