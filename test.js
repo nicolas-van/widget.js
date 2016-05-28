@@ -2,13 +2,13 @@
 (function() {
 "use strict";
 
-if (typeof(module) !== "undefined") {
+/*if (typeof(module) !== "undefined") {
     global.assert = require("assert");
     var jsdom = require("jsdom").jsdom;
     var doc = jsdom();
     var window = doc.parentWindow;
     global.widget = require("./widget")(window);
-}
+}*/
 
 suite("LifeCycle");
 

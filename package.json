@@ -12,18 +12,14 @@
     "type": "git",
     "url": "git://github.com/nicolas-van/widget.js.git"
   },
-  "dependencies": {
-    "underscore": ">=1.8.3",
-    "jquery": ">=1.11.3",
-    "ring": ">=2.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "grunt": "*",
-    "grunt-contrib-jshint": "*",
+    "grunt": "^1.0.1",
     "grunt-contrib-compress": ">=0.5.2",
-    "grunt-mocha": "~0.4.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-mocha": "^1.0.2",
     "grunt-mocha-test": "~0.7.0",
-    "mocha": "~1.14.0",
-    "jsdom": "~0.8.8"
+    "jsdom": "~0.8.8",
+    "mocha": "^1.14.0"
   }
 }

@@ -7,9 +7,9 @@
     "bower_components"
   ],
   "devDependencies": {
-    "mocha": "1.12",
     "ristretto": "~1.2.0",
     "jquery": "~2.2.4",
     "lodash": "~4.13.1",
+    "mocha": "~2.5.3"
   }
 }

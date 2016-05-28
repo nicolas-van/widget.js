@@ -6,10 +6,9 @@ module.exports = function(grunt) {
         jshint: {
             files: ['widget.js', 'test.js'],
             options: {
-                es3: true, // ie 7 compatibility
+                esversion: 6,
                 eqeqeq: true, // no == or !=
                 immed: true, // forces () around directly called functions
-                forin: true, // makes it harder to use for in
                 latedef: "nofunc", // makes it impossible to use a variable before it is declared
                 newcap: true, // force capitalized constructors
                 strict: true, // enforce strict mode
@@ -36,21 +35,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        compress: {
-            main: {
-                options: {
-                  archive: pack.name + "-" + pack.version + ".zip",
-                },
-                files: [
-                    {src: 'widget.js', dest: '.'},
-                    {expand: true, flatten: true, src: 'bower_components/underscore/underscore.js', dest: '.'},
-                    {expand: true, flatten: true, src: 'bower_components/jquery/jquery.js', dest: '.'},
-                    {expand: true, flatten: true, src: 'bower_components/ring/ring.js', dest: '.'},
-                    {src: 'README', dest: '.'},
-                    {src: 'package.json', dest: '.'},
-                ],
-            }
-        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -58,9 +42,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-compress');
 
-    grunt.registerTask('test', ['jshint', "mocha", "mochaTest"]);
-
-    grunt.registerTask('dist', ['compress']);
+    grunt.registerTask('test', ['jshint'/*, "mocha", "mochaTest"*/]);
 
     grunt.registerTask('default', ['test']);
 

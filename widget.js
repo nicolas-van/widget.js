@@ -76,7 +76,7 @@ function declare(document) {
             this.parent = undefined;
             this.__lifeCycleDestroyed = true;
         }
-    }
+    };
     
     widget.EventDispatcher = class EventDispatcher extends widget.LifeCycle {
         constructor() {
@@ -136,7 +136,7 @@ function declare(document) {
             this.className().split(" ").filter((name) => name !== "").forEach(name => this.el.classList.add(name));
             var atts = this.attributes();
             for (var key in atts) this.el.setAttribute(key, atts[key]);
-            this.el.__widget_Widget = this;
+            this.el.__widgetWidget = this;
             this.el.dataset.__widget = "";
     
             this.el.innerHTML = this.render();
@@ -149,7 +149,7 @@ function declare(document) {
             this.children.forEach(function(el) {
                 el.destroy();
             });
-            this.el.remove()
+            this.el.remove();
             super.destroy();
         }
         appendTo(target) {
@@ -267,7 +267,7 @@ function declare(document) {
     };
     
     widget.getWidget = function(element) {
-        return element.__widget_Widget;
+        return element.__widgetWidget;
     };
 
 
