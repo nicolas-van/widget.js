@@ -51,18 +51,18 @@ test("base", function() {
 suite("Widget");
 
 test("base", function() {
-    var Claz = class extends widget.Widget {
-        tagName() { return "span"; }
-        className() { return "mytestspan"; }
-        attributes() {
+    var Claz = widget.Widget.extend({
+        tagName: function() { return "span"; },
+        className: function() { return "mytestspan"; },
+        attributes: function() {
             return {
                 "id": "testspan"
             };
-        }
-        render() {
+        },
+        render: function() {
             return "test";
-        }
-    };
+        },
+    });
     var x = new Claz();
     x.appendTo(document.querySelector("body"));
     var $el = $("#testspan");
@@ -139,11 +139,11 @@ test("appendEvents", function() {
 });
 
 test("autoParent", function() {
-    class Claz extends widget.Widget {
-        render() {
+    var Claz = widget.Widget.extend({
+        render: function() {
             return "<div></div>";
-        }
-    }
+        },
+    });
     var x = new Claz();
     assert.strictEqual(x.parent, null);
     var y = new widget.Widget();
@@ -178,11 +178,11 @@ test("domEventsSimple", function() {
 });
 
 test("domEventsBubbling", function() {
-    class Claz extends widget.Widget {
-        render() {
+    var Claz = widget.Widget.extend({
+        render: function() {
             return "<p><button></button></p>";
-        }
-    }
+        },
+    });
     var x = new Claz();
     x.appendTo($("body")[0]); // only for Safari which handles click events in an odd way
     var tmp = 0;

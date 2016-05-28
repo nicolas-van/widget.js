@@ -61,9 +61,33 @@ function declare(document) {
     
     var widget = {};
     widget.internal = {};
+    
+    widget.Inheritable = class Inheritable {
+        static extend(protoProps) {
+            var parent = this;
+            var child;
+            if (protoProps && protoProps.hasOwnProperty('constructor')) {
+                child = protoProps.constructor;
+            } else {
+                child = function() { return parent.apply(this, arguments); };
+            }
+            for (var key in parent) {
+                if (parent.hasOwnProperty(key)) {
+                    child[key] = parent[key];
+                } 
+            }
+            child.prototype = Object.create(parent.prototype);
+            for (var key2 in protoProps) {
+                child.prototype[key2] = protoProps[key2];
+            }
+            child.prototype.constructor = child;
+            return child;
+        }
+    };
 
-    widget.LifeCycle = class LifeCycle {
+    widget.LifeCycle = class LifeCycle extends widget.Inheritable {
         constructor() {
+            super();
             this.__lifeCycle = true;
             this.__lifeCycleChildren = [];
             this.__lifeCycleParent = null;
@@ -155,7 +179,7 @@ function declare(document) {
             var atts = this.attributes();
             for (var key in atts) this.el.setAttribute(key, atts[key]);
             this.el.__widgetWidget = this;
-            this.el.dataset.__widget = "";
+            this.el.setAttribute("data-__widget", "");
     
             this.el.innerHTML = this.render();
         }
@@ -172,7 +196,7 @@ function declare(document) {
             super.destroy();
         }
         appendTo(target) {
-            target.insertBefore(this.el, null);
+            target.appendChild(this.el);
             this.__checkAppended();
             return this;
         }
@@ -182,7 +206,10 @@ function declare(document) {
             return this;
         }
         insertAfter(target) {
-            target.parentNode.insertBefore(this.el, target.nextSibling);
+            if (! target.nextSibling)
+                target.parentNode.appendChild(this.el);
+            else 
+                target.parentNode.insertBefore(this.el, target.nextSibling);
             this.__checkAppended();
             return this;
         }
@@ -263,7 +290,7 @@ function declare(document) {
             // check for parent change
             if (! this.__widgetExplicitParent) {
                 var parent = this.el.parentNode;
-                while (parent && ! (parent.dataset && parent.dataset.__widget !== undefined)) {
+                while (parent && ! widget.getWidget(parent)) {
                     parent = parent.parentNode;
                 }
                 parent = parent ? widget.getWidget(parent) : null;
@@ -289,7 +316,6 @@ function declare(document) {
     widget.getWidget = function(element) {
         return element.__widgetWidget;
     };
-
 
     return widget;
 }

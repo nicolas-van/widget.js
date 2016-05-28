@@ -45,11 +45,6 @@ module.exports = function(grunt) {
                     'widget.babelized.js': 'widget.js'
                 }
             },
-            tests: {
-                files: {
-                    'test.babelized.js': 'test.js'
-                }
-            }
         }
     });
 
