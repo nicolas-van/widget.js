@@ -51,18 +51,18 @@ test("base", function() {
 suite("Widget");
 
 test("base", function() {
-    var Claz = widget.Widget.extend({
-        tagName: function() { return "span"; },
-        className: function() { return "mytestspan"; },
-        attributes: function() {
+    class Claz extends widget.Widget {
+        tagName() { return "span"; }
+        className() { return "mytestspan"; }
+        attributes() {
             return {
                 "id": "testspan"
             };
-        },
-        render: function() {
+        }
+        render() {
             return "test";
-        },
-    });
+        }
+    };
     var x = new Claz();
     x.appendTo(document.querySelector("body"));
     var $el = $("#testspan");
@@ -139,11 +139,11 @@ test("appendEvents", function() {
 });
 
 test("autoParent", function() {
-    var Claz = widget.Widget.extend({
-        render: function() {
+    class Claz extends widget.Widget {
+        render() {
             return "<div></div>";
-        },
-    });
+        }
+    };
     var x = new Claz();
     assert.strictEqual(x.parent, null);
     var y = new widget.Widget();
@@ -180,11 +180,11 @@ test("domEventsSimple", function() {
 });
 
 test("domEventsBubbling", function() {
-    var Claz = widget.Widget.extend({
-        render: function() {
+    class Claz extends widget.Widget {
+        render() {
             return "<p><button></button></p>";
-        },
-    });
+        }
+    };
     var x = new Claz();
     x.appendTo($("body")[0]);
     var tmp = 0;

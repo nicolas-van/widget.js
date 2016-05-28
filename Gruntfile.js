@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['widget.js', 'test.js'],
+            files: ['widget.js'],
             options: {
                 esversion: 5,
                 eqeqeq: true, // no == or !=
@@ -35,14 +35,31 @@ module.exports = function(grunt) {
                 }
             }
         },
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['es2015'],
+                "plugins": [
+                    ["transform-es2015-classes", {
+                        "loose": true,
+                    }],
+                ]
+            },
+            main: {
+                files: {
+                    'test.babelized.js': 'test.js'
+                }
+            },
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-babel');
     
-    grunt.registerTask('gen', ['jshint']);
+    grunt.registerTask('gen', ['jshint', 'babel']);
 
     grunt.registerTask('default', ['gen'/*, "mocha", "mochaTest"*/]);
 
