@@ -52,9 +52,9 @@ suite("Widget");
 
 test("base", function() {
     class Claz extends widget.Widget {
-        tagName() { return "span"; }
-        className() { return "mytestspan"; }
-        attributes() {
+        get tagName() { return "span"; }
+        get className() { return "mytestspan"; }
+        get attributes() {
             return {
                 "id": "testspan"
             };

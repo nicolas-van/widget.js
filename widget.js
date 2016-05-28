@@ -175,20 +175,19 @@ function declare(document) {
     });
 
     widget.Widget = widget.EventDispatcher.extend({
-        tagName: function() { return 'div'; },
-        className: function() { return ''; },
-        attributes: function() { return {}; },
+        get tagName() { return 'div'; },
+        get className() { return ''; },
+        get attributes() { return {}; },
         constructor: function Widget() {
             widget.EventDispatcher.call(this, arguments);
             this.__widgetAppended = false;
             this.__widgetExplicitParent = false;
             this.__widgetDomEvents = {};
-            this.__widgetElement = document.createElement(this.tagName());
-            this.className().split(" ").filter(function(name) { return name !== ""; }).forEach(function(name) {
+            this.__widgetElement = document.createElement(this.tagName);
+            this.className.split(" ").filter(function(name) { return name !== ""; }).forEach(function(name) {
                 return addClass(this.el, name);
             }.bind(this));
-            var atts = this.attributes();
-            for (var key in atts) this.el.setAttribute(key, atts[key]);
+            for (var key in this.attributes) this.el.setAttribute(key, this.attributes[key]);
             this.el.__widgetWidget = this;
             this.el.setAttribute("data-__widget", "");
     
