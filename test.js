@@ -184,6 +184,7 @@ test("domEventsBubbling", function() {
         }
     }
     var x = new Claz();
+    x.appendTo($("body")[0]); // only for Safari which handles click events in an odd way
     var tmp = 0;
     var event = function(e) {
         assert.strictEqual(this, x);
@@ -224,6 +225,8 @@ test("domEventsBubbling", function() {
     assert.notEqual(x.__widgetDomEvents["dom:click button"], undefined);
     x.el.querySelector("p").click();
     assert.strictEqual(tmp, 0);
+    
+    x.destroy();
 });
 
 })();
