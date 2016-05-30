@@ -21,13 +21,17 @@ widgets.
     }
 
     new MyWidget().appendTo(document.body);
+    
+* Uses inheritance based on ES6 or helpers if you don't want to use ES6 classes.
+* Provides an events system separate from the DOM.
+* Provides life-cycle management for visual components.
 
 [Read the documentation here](http://widgetjs.readthedocs.org/)
 
 widget.js is not a full featured framework that can handle all aspects of a web application like network communications
 or routing, there already exists good libraries for that. widget.js only handles one aspect of web development:
 separation of visual components into independant entities. So it provides only features to serve that goal, namely
-widgets, lifecycle management and events.
+widgets, events and lifecycle management.
 
 To install:
 
