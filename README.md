@@ -25,6 +25,7 @@ widgets.
 * Uses inheritance based on ES6 or helpers if you don't want to use ES6 classes.
 * Provides an events system separate from the DOM.
 * Provides life-cycle management for visual components.
+* Can be used with or without jQuery.
 
 [Read the documentation here](http://widgetjs.readthedocs.org/)
 
