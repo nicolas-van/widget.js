@@ -38,15 +38,6 @@ if (typeof(exports) !== "undefined") { // node
 }
 
 function declare(document) {
-    function createCustomEvent(type, detail) {
-        if (typeof CustomEvent === "function") {
-            return new CustomEvent(type, {detail: detail});
-        } else {
-            var e = document.createEvent("CustomEvent");
-            e.initCustomEvent(type, false, false, detail);
-            return e;
-        }
-    }
     
     function matches(elm, selector) {
         if (elm.matches)
@@ -67,6 +58,17 @@ function declare(document) {
     }
     
     var widget = {};
+    
+    widget.createCustomEvent = function(type, canBubble, cancelable, detail) {
+        if (typeof CustomEvent === "function") {
+            return new CustomEvent(type, {detail: detail, bubbles: canBubble || false,
+                cancelable: cancelable || false});
+        } else {
+            var e = document.createEvent("CustomEvent");
+            e.initCustomEvent(type, canBubble || false, cancelable || false, detail);
+            return e;
+        }
+    }
     
     var Inheritable = function Inheritable() {};
     Inheritable.extend = function(protoProps) {
@@ -180,7 +182,7 @@ function declare(document) {
             if (arg1 instanceof Event) {
                 this.dispatchEvent(arg1);
             } else {
-                var ev = createCustomEvent(arg1, arg2);
+                var ev = widget.createCustomEvent(arg1, false, false, arg2);
                 this.dispatchEvent(ev);
             }
             return this;
