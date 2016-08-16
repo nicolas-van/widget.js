@@ -66,6 +66,12 @@ function declare(document) {
         } else {
             var e = document.createEvent("CustomEvent");
             e.initCustomEvent(type, canBubble || false, cancelable || false, detail);
+            if (cancelable) {
+                // hack for IE due to a bug in that browser
+                e.preventDefault = function () {
+                    Object.defineProperty(this, "defaultPrevented", {get: function () {return true;}});
+                };
+            }
             return e;
         }
     }
