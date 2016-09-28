@@ -11,12 +11,10 @@ widgets.
     class MyWidget extends widget.Widget {
         constructor() {
             super();
+            this.el.innerHTML = "<h1>Welcome to widget.js!</h1>";
             this.on("dom:click h1", function() {
                 window.location = "http://widgetjs.neoname.eu";
             });
-        }
-        render() {
-            return "<h1>Welcome to widget.js!</h1>";
         }
     }
 
