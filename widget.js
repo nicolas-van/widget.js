@@ -74,7 +74,7 @@ function declare(document) {
             }
             return e;
         }
-    }
+    };
     
     var Inheritable = function Inheritable() {};
     Inheritable.extend = function(protoProps) {
@@ -222,7 +222,12 @@ function declare(document) {
             this.el.__widgetWidget = this;
             this.el.setAttribute("data-__widget", "");
     
-            this.el.innerHTML = this.render();
+            if (this.render) {
+                if (console && console.warn) {
+                    console.warn("Using deprecated feature Widget.render()");
+                }
+                this.el.innerHTML = this.render();
+            }
         },
         get el() {
             return this.__widgetElement;
@@ -269,9 +274,6 @@ function declare(document) {
                 this.el.parentNode.removeChild(this.el);
             this.__checkAppended();
             return this;
-        },
-        render: function() {
-            return "";
         },
         addEventListener: function(type, callback) {
             EventDispatcher.prototype.addEventListener.call(this, type, callback);

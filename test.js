@@ -80,8 +80,9 @@ test("base", function() {
                 "id": "testspan"
             };
         }
-        render() {
-            return "test";
+        constructor() {
+            super();
+            this.el.innerHTML = "test";
         }
     };
     var x = new Claz();
@@ -161,8 +162,9 @@ test("appendEvents", function() {
 
 test("autoParent", function() {
     class Claz extends widget.Widget {
-        render() {
-            return "<div></div>";
+        constructor() {
+            super();
+            this.el.innerHTML = "<div></div>";
         }
     };
     var x = new Claz();
@@ -202,8 +204,9 @@ test("domEventsSimple", function() {
 
 test("domEventsBubbling", function() {
     class Claz extends widget.Widget {
-        render() {
-            return "<p><button></button></p>";
+        constructor() {
+            super();
+            this.el.innerHTML = "<p><button></button></p>";
         }
     };
     var x = new Claz();
@@ -250,6 +253,16 @@ test("domEventsBubbling", function() {
     assert.strictEqual(tmp, 0);
     
     x.destroy();
+});
+
+test("render", function() {
+    class Claz extends widget.Widget {
+        render() {
+            return "test";
+        }
+    };
+    var x = new Claz();
+    assert.strictEqual(x.el.innerText, "test");
 });
 
 $(function() {

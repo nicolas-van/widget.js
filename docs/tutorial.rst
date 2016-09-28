@@ -88,15 +88,15 @@ Take a look at the ``src/js/app.js`` file to have an example of your first widge
 .. code-block:: javascript
 
     myapp.Widget1 = class Widget1 extends widget.Widget {
-        render() {
-            return nunjucks.render('widget1.html');
+        constructor() {
+            super();
+            this.el.innerHTML = nunjucks.render('widget1.html');
         }
     }
     
-We can see that ``Widget1`` is a simple subclass of ``widget.Widget``. It overrides the method ``render()`` to return
-some HTML code rendered using Nunjucks (the ``widget1.html`` file is located in the ``views`` folder). The ``render()``
-method is a convenience used to indicate to the ``widget.Widget`` class the base HTML that should be appended to our
-widget.
+We can see that ``Widget1`` is a simple subclass of ``widget.Widget``. It overrides the constructor to add some HTML
+to the root element of the widget, ``this.el``. In this example that HTML is rendered using Nunjucks (the
+``widget1.html`` file is located in the ``views`` folder).
 
 In the ``index.html`` file we can see how this widget is instantiated and appended into the DOM:
 
@@ -119,8 +119,9 @@ You can access the root element of a widget by using the ``el`` accessor:
 .. code-block:: javascript
 
     class MyWidget extends widget.Widget {
-        render() {
-            return "<p>Hi, I'm a widget!</p>";
+        constructor() {
+            super();
+            this.el.innerHTML = "<p>Hi, I'm a widget!</p>";
         }
     }
     console.log(new MyWidget().el);
@@ -129,8 +130,7 @@ You can access the root element of a widget by using the ``el`` accessor:
     //   <p>Hi, I'm a widget!</p>
     // </div>
     
-As we can see, the ``render()`` is simply called during the widget's creation to fill the root element. The generation
-of the root element can be customized using the ``tagName``, ``attributes`` and ``className`` attributes:
+The generation of the root element can be customized using the ``tagName``, ``attributes`` and ``className`` attributes:
 
 .. code-block:: javascript
 
@@ -138,8 +138,9 @@ of the root element can be customized using the ``tagName``, ``attributes`` and 
         get tagName() { return "span"; }
         get className() { return "mywidget"; }
         get attributes() { return {"style": "display: block"}; }
-        render() {
-            return "<p>Hi, I'm a widget!</p>";
+        constructor() {
+            super();
+            this.el.innerHTML = "<p>Hi, I'm a widget!</p>";
         }
     }
     console.log(new MyWidget().el);
@@ -157,8 +158,9 @@ into the DOM you can use one of the methods like ``appendTo()``:
 .. code-block:: javascript
 
     class MyWidget extends widget.Widget {
-        render() {
-            return "<p>Hi, I'm a widget!</p>";
+        constructor() {
+            super();
+            this.el.innerHTML = "<p>Hi, I'm a widget!</p>";
         }
     }
     new MyWidget().appendTo(document.body);
@@ -322,12 +324,10 @@ As example, only a widget should register DOM events on one of its own elements.
 .. code-block:: javascript
 
     class MyWidget extends widget.Widget {
-        render() {
-            return nunjucks.render('myform.html');
-        }
         constructor() {
             super();
             this.on("dom:submit form", this.formSubmit);
+            this.el.innerHTML = nunjucks.render('myform.html');
         }
         formSubmit() {
             this.trigger("formCompleted");
