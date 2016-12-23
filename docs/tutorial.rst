@@ -233,12 +233,13 @@ widget. It is also possible to listen to events on sub elements of the root elem
 
 .. code-block:: javascript
 
-    x.on("dom:click button", function() { // note that you can replace "button" by any CSS selector
+    x.on("dom:click button", function(e) { // note that you can replace "button" by any CSS selector
         console.log("the button was clicked");
     });
     
 Doing so uses event bubbling. In this example the hypothetic button could be created after the call to ``on()`` without
-problems. It can also be great for performances in multiple cases.
+problems. It can also be great for performances in multiple cases. Also note that, in the above example, you can get
+the button element using ``e.bindedTarget``.
 
 Widget Life Cycle
 -----------------
