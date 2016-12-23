@@ -284,6 +284,7 @@ function declare(document) {
                 var domCallback;
                 if (! res[2]) {
                     domCallback = function(e) {
+                        e.bindedTarget = this.el;
                         this.dispatchEvent(e, type);
                     }.bind(this);
                 } else {
@@ -292,8 +293,10 @@ function declare(document) {
                         while (elem && elem !== this.el && ! matches(elem, res[2])) {
                             elem = elem.parentNode;
                         }
-                        if (elem && elem !== this.el)
+                        if (elem && elem !== this.el) {
+                            e.bindedTarget = elem;
                             this.dispatchEvent(e, type);
+                        }
                     }.bind(this);
                 }
                 this.el.addEventListener(res[1], domCallback);
