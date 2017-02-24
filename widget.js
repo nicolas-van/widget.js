@@ -27,14 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 "use strict";
 
 if (typeof(exports) !== "undefined") { // node
-    module.exports = function(w) {
-        if (! w.document) {
-            throw new Error( "widget.js requires a window with a document" );
-        }
-        return declare(w.document);
-    };
+    module.exports = declare(document);
 } else { // define global variable 'widget'
-    window.widget = declare(window.document);
+    window.widget = declare(document);
 }
 
 function declare(document) {
