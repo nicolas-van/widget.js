@@ -1,6 +1,6 @@
 {
   "name": "widgetjs",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "widget.js framework",
   "main": "widget.js",
   "author": "Nicolas Vanhoren",
@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git://github.com/nicolas-van/widget.js.git"
   },
+  "files": [
+    "widget.js"  
+  ],
+  "main": "widget.js",
   "dependencies": {},
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",

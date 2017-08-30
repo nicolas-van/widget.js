@@ -24,7 +24,7 @@ The easiest way to start a widget.js application is to checkout the sample appli
 
 .. code-block:: bash
 
-    git clone https://github.com/nicolas-van/widget.js-starter.git -b 1.2.2
+    git clone https://github.com/nicolas-van/widget.js-starter.git -b 1.2.3
     
 This sample application uses npm_ and grunt_ to download the dependencies and launch a small web server. Type
 these lines to download everything and start the server:
