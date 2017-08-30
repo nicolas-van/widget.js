@@ -15,13 +15,17 @@
   "dependencies": {},
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",
+    "chai": "^4.1.1",
     "grunt": "^1.0.1",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-compress": ">=0.5.2",
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-mocha": "^1.0.2",
     "grunt-mocha-test": "~0.7.0",
+    "jquery": "~2.2.4",
     "jsdom": "~0.8.8",
-    "mocha": "^1.14.0"
+    "lodash": "~4.13.1",
+    "mocha": "~2.5.3",
+    "ristretto": "1.2.1"
   }
 }
