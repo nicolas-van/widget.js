@@ -3,13 +3,13 @@ Copyright (c) 2012, Nicolas Vanhoren
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -33,7 +33,7 @@ if (typeof(exports) !== "undefined") { // node
 }
 
 function declare(document) {
-    
+
     function matches(elm, selector) {
         if (elm.matches)
             return elm.matches(selector);
@@ -44,16 +44,16 @@ function declare(document) {
         while (--i >= 0 && matches.item(i) !== elm) {}
         return i > -1;
     }
-    
+
     function addClass(el, name) {
         if (el.classList)
             el.classList.add(name);
         else
             el.className += " " + name;
     }
-    
+
     var widget = {};
-    
+
     widget.createCustomEvent = function(type, canBubble, cancelable, detail) {
         if (typeof CustomEvent === "function") {
             return new CustomEvent(type, {detail: detail, bubbles: canBubble || false,
@@ -70,7 +70,7 @@ function declare(document) {
             return e;
         }
     };
-    
+
     var Inheritable = function Inheritable() {};
     Inheritable.extend = function(protoProps) {
         var parent = this;
@@ -132,7 +132,7 @@ function declare(document) {
         },
     });
     widget.LifeCycle = LifeCycle;
-    
+
     var EventDispatcher = LifeCycle.extend({
         constructor: function EventDispatcher() {
             LifeCycle.call(this, arguments);
@@ -194,7 +194,7 @@ function declare(document) {
         },
     });
     widget.EventDispatcher = EventDispatcher;
-    
+
     var getWidget = function(element) {
         return element.__widgetWidget;
     };
@@ -216,7 +216,7 @@ function declare(document) {
             for (var key in this.attributes) this.el.setAttribute(key, this.attributes[key]);
             this.el.__widgetWidget = this;
             this.el.setAttribute("data-__widget", "");
-    
+
             if (this.render) {
                 if (console && console.warn) {
                     console.warn("Using deprecated feature Widget.render()");
@@ -232,8 +232,7 @@ function declare(document) {
             this.children.forEach(function(el) {
                 el.destroy();
             });
-            if (this.el.parentNode)
-                this.el.parentNode.removeChild(this.el);
+            this.detach();
             EventDispatcher.prototype.destroy.call(this);
         },
         appendTo: function(target) {
@@ -249,7 +248,7 @@ function declare(document) {
         insertAfter: function(target) {
             if (! target.nextSibling)
                 target.parentNode.appendChild(this.el);
-            else 
+            else
                 target.parentNode.insertBefore(this.el, target.nextSibling);
             this.__checkAppended();
             return this;
@@ -267,7 +266,7 @@ function declare(document) {
         detach: function() {
             if (this.el.parentNode)
                 this.el.parentNode.removeChild(this.el);
-            this.__checkAppended();
+            this.__checkAppended(true);
             return this;
         },
         addEventListener: function(type, callback) {
@@ -327,7 +326,7 @@ function declare(document) {
             this.__widgetExplicitParent = false;
             this.__checkAppended();
         },
-        __checkAppended: function() {
+        __checkAppended: function(detached) {
             // check for parent change
             if (! this.__widgetExplicitParent) {
                 var parent = this.el.parentNode;
@@ -340,9 +339,9 @@ function declare(document) {
                     this.__widgetExplicitParent = false;
                 }
             }
-            
+
             // update appendedToDom and propagate to all sub elements
-            var inHtml = document.body.contains(this.el);
+            var inHtml = detached ? false : document.body.contains(this.el);
             if (this.appendedToDom === inHtml)
                 return;
             this.__widgetAppended = inHtml;
@@ -354,7 +353,7 @@ function declare(document) {
         },
     });
     widget.Widget = Widget;
-    
+
     var ready = function(callback) {
         if (document.readyState === "complete") {
             callback();
@@ -367,7 +366,7 @@ function declare(document) {
         }
     };
     widget.ready = ready;
-    
+
     return widget;
 }
 })();
