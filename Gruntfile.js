@@ -38,12 +38,7 @@ module.exports = function(grunt) {
         babel: {
             options: {
                 sourceMap: true,
-                presets: ['es2015'],
-                "plugins": [
-                    ["transform-es2015-classes", {
-                        "loose": true,
-                    }],
-                ]
+                presets: ['env'],
             },
             main: {
                 files: {
@@ -54,11 +49,8 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-mocha');
-    grunt.loadNpmTasks('grunt-mocha-test');
-    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-babel');
-    
+
     grunt.registerTask('gen', ['jshint', 'babel']);
 
     grunt.registerTask('default', ['gen'/*, "mocha", "mochaTest"*/]);
