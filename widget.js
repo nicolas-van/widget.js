@@ -27,12 +27,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 "use strict";
 
 if (typeof(exports) !== "undefined") { // node
-    module.exports = declare(document);
+    module.exports = declare();
 } else { // define global variable 'widget'
-    window.widget = declare(document);
+    window.widget = declare();
 }
 
-function declare(document) {
+function declare() {
 
     function matches(elm, selector) {
         if (elm.matches)

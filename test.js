@@ -2,14 +2,6 @@
 (function() {
 "use strict";
 
-/*if (typeof(module) !== "undefined") {
-    global.assert = require("assert");
-    var jsdom = require("jsdom").jsdom;
-    var doc = jsdom();
-    var window = doc.parentWindow;
-    global.widget = require("./widget")(window);
-}*/
-
 suite("LifeCycle");
 
 test("base", function() {
@@ -44,7 +36,7 @@ test("base", function() {
     x.off("test", fct);
     x.trigger("test");
     assert.equal(tmp, 0);
-    
+
     tmp = 0;
     var tmp2 = 0;
     var events = {
@@ -125,11 +117,11 @@ test("base", function() {
     assert.strictEqual($el.parents()[0], $("body")[0]);
     assert.strictEqual($el.html(), "test");
     assert.strictEqual($el[0], $("span.mytestspan")[0]);
-    
+
     var y = new Claz();
     y.parent = x;
     assert.strictEqual(y.parent, x);
-    
+
     x.destroy();
     $el = $("#testspan");
     assert.strictEqual($el.length, 0);
@@ -155,7 +147,7 @@ test("appendEvents", function() {
     x.detach();
     assert.strictEqual(x.__widgetAppended, false);
     assert.strictEqual(y.__widgetAppended, false);
-    
+
     x.destroy();
     y.destroy();
 });
@@ -171,14 +163,14 @@ test("autoParent", function() {
     assert.strictEqual(x.parent, null);
     var y = new widget.Widget();
     assert.strictEqual(y.parent, null);
-    
+
     y.appendTo(x.el.querySelector("div"));
     assert.strictEqual(x.parent, null);
     assert.strictEqual(y.parent, x);
     y.detach();
     assert.strictEqual(x.parent, null);
     assert.strictEqual(y.parent, null);
-    
+
     var l = new widget.LifeCycle();
     y.parent = l;
     assert.strictEqual(y.parent, l);
@@ -226,7 +218,7 @@ test("domEventsBubbling", function() {
     assert.equal(x.__widgetDomEvents["dom:click button"], undefined);
     x.el.querySelector("button").click();
     assert.strictEqual(tmp, 0);
-    
+
     tmp = 0;
     event = function(e) {
         assert.strictEqual(this, x);
@@ -242,7 +234,7 @@ test("domEventsBubbling", function() {
     assert.equal(x.__widgetDomEvents["dom:click p"], undefined);
     x.el.querySelector("button").click();
     assert.strictEqual(tmp, 0);
-    
+
     tmp = 0;
     event = function(e) {
         tmp = 1;
@@ -251,7 +243,7 @@ test("domEventsBubbling", function() {
     assert.notEqual(x.__widgetDomEvents["dom:click button"], undefined);
     x.el.querySelector("p").click();
     assert.strictEqual(tmp, 0);
-    
+
     x.destroy();
 });
 

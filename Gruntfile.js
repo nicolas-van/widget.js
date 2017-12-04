@@ -27,14 +27,6 @@ module.exports = function(grunt) {
                 },
             }
         },
-        mochaTest: {
-            main: {
-                src: ['test.js'],
-                options: {
-                    ui: "qunit",
-                }
-            }
-        },
         babel: {
             options: {
                 sourceMap: true,
@@ -50,9 +42,12 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-babel');
+    grunt.loadNpmTasks('grunt-mocha');
 
     grunt.registerTask('gen', ['jshint', 'babel']);
 
-    grunt.registerTask('default', ['gen'/*, "mocha", "mochaTest"*/]);
+    grunt.registerTask('test', ['gen', 'mocha']);
+
+    grunt.registerTask('default', ['gen']);
 
 };
