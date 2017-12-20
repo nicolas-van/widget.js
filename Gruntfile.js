@@ -22,7 +22,6 @@ module.exports = function(grunt) {
                 src: ['test.html'],
                 options: {
                     log: true,
-                    reporter: "Nyan",
                     run: true,
                 },
             }
