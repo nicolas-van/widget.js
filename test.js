@@ -247,15 +247,6 @@ describe("Widget", () => {
     x.destroy();
   });
 
-  test("render", function() {
-    class Claz extends widgetjs.Widget {
-      render() {
-        return "test";
-      }
-    };
-    var x = new Claz();
-    expect(x.el.innerHTML.trim()).toBe("test");
-  });
 });
 
 describe("ready", function() {

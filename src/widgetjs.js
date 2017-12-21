@@ -200,13 +200,6 @@ export var Widget = EventDispatcher.extend({
     for (var key in this.attributes) this.el.setAttribute(key, this.attributes[key]);
     this.el.__widgetWidget = this;
     this.el.setAttribute("data-__widget", "");
-
-    if (this.render) {
-      if (console && console.warn) {
-        console.warn("Using deprecated feature Widget.render()");
-      }
-      this.el.innerHTML = this.render();
-    }
   },
   get el() {
     return this.__widgetElement;
