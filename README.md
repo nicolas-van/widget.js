@@ -8,7 +8,9 @@ A lightweight JavaScript component framework
 widget.js is a lightweight framework in JavaScript to separate web applications in multiples reusable components called
 widgets.
 
-    class MyWidget extends widget.Widget {
+    import {Widget} from "widgetjs";
+
+    class MyWidget extends Widget {
         constructor() {
             super();
             this.el.innerHTML = "<h1>Welcome to widget.js!</h1>";
@@ -19,7 +21,7 @@ widgets.
     }
 
     new MyWidget().appendTo(document.body);
-    
+
 * Uses inheritance based on ES6 or helpers if you don't want to use ES6 classes.
 * Provides an events system separate from the DOM.
 * Provides life-cycle management for visual components.

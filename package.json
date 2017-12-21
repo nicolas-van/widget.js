@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "webpack",
-    "eslint": "eslint widget.js"
+    "lint": "eslint src/**.js"
   },
   "dependencies": {},
   "devDependencies": {

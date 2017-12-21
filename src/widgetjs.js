@@ -42,9 +42,7 @@ function addClass(el, name) {
     el.className += " " + name;
 }
 
-var widget = {};
-
-widget.createCustomEvent = function(type, canBubble, cancelable, detail) {
+export function createCustomEvent(type, canBubble, cancelable, detail) {
   if (typeof CustomEvent === "function") {
     return new CustomEvent(type, {detail: detail, bubbles: canBubble || false,
       cancelable: cancelable || false});
@@ -59,9 +57,9 @@ widget.createCustomEvent = function(type, canBubble, cancelable, detail) {
     }
     return e;
   }
-};
+}
 
-var Inheritable = function Inheritable() {};
+export var Inheritable = function Inheritable() {};
 Inheritable.extend = function(protoProps) {
   var parent = this;
   var child;
@@ -83,9 +81,8 @@ Inheritable.extend = function(protoProps) {
   child.prototype.constructor = child;
   return child;
 };
-widget.Inheritable = Inheritable;
 
-var LifeCycle = Inheritable.extend({
+export var LifeCycle = Inheritable.extend({
   constructor: function LifeCycle() {
     Inheritable.apply(this, arguments);
     this.__lifeCycle = true;
@@ -121,9 +118,8 @@ var LifeCycle = Inheritable.extend({
     this.__lifeCycleDestroyed = true;
   },
 });
-widget.LifeCycle = LifeCycle;
 
-var EventDispatcher = LifeCycle.extend({
+export var EventDispatcher = LifeCycle.extend({
   constructor: function EventDispatcher() {
     LifeCycle.call(this, arguments);
     this._listeners = [];
@@ -173,7 +169,7 @@ var EventDispatcher = LifeCycle.extend({
     if (arg1 instanceof Event) {
       this.dispatchEvent(arg1);
     } else {
-      var ev = widget.createCustomEvent(arg1, false, false, arg2);
+      var ev = createCustomEvent(arg1, false, false, arg2);
       this.dispatchEvent(ev);
     }
     return this;
@@ -183,14 +179,12 @@ var EventDispatcher = LifeCycle.extend({
     LifeCycle.prototype.destroy.call(this);
   },
 });
-widget.EventDispatcher = EventDispatcher;
 
-var getWidget = function(element) {
+export function getWidget(element) {
   return element.__widgetWidget;
-};
-widget.getWidget = getWidget;
+}
 
-var Widget = EventDispatcher.extend({
+export var Widget = EventDispatcher.extend({
   get tagName() { return 'div'; },
   get className() { return ''; },
   get attributes() { return {}; },
@@ -342,9 +336,8 @@ var Widget = EventDispatcher.extend({
     });
   },
 });
-widget.Widget = Widget;
 
-var ready = function(callback) {
+export function ready(callback) {
   if (document.readyState === "complete") {
     callback();
   } else {
@@ -354,7 +347,4 @@ var ready = function(callback) {
     };
     document.addEventListener("DOMContentLoaded", c);
   }
-};
-widget.ready = ready;
-
-export default widget;
+}
