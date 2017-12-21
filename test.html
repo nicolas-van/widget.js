@@ -3,23 +3,21 @@
   <meta charset="utf-8">
   <title>Mocha Tests</title>
   <link rel="stylesheet" href="node_modules/mocha/mocha.css" />
-    <script type="text/javascript" src="node_modules/lodash/lodash.js"></script>
-    <script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="widget.js"></script>
+  <script type="text/javascript" src="node_modules/lodash/lodash.js"></script>
+  <script type="text/javascript" src="node_modules/jquery/dist/jquery.js"></script>
+  <script type="text/javascript" src="dist/widgetjs.bundle.js"></script>
 </head>
 <body>
-    <div id="mocha"></div>
-    <script src="node_modules/mocha/mocha.js"></script>
-    <script src="node_modules/chai/chai.js"></script>
-    <script>
-        var assert = chai.assert;
-        mocha.setup("qunit");
-    </script>
-    <script src="test.babelized.js"></script>
-    <script>
-        if (navigator.userAgent.indexOf('PhantomJS') < 0) {
-            mocha.run();
-        }
-    </script>
+  <div id="mocha"></div>
+  <script src="node_modules/mocha/mocha.js"></script>
+  <script src="node_modules/chai/chai.js"></script>
+  <script>
+    window.assert = chai.assert;
+    mocha.setup("qunit");
+  </script>
+  <script src="test.js"></script>
+  <script>
+    mocha.run();
+  </script>
 </body>
 </html>

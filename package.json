@@ -4,6 +4,7 @@
   "description": "widget.js framework",
   "main": "dist/widget.bundle.js",
   "author": "Nicolas Vanhoren",
+  "license": "MIT",
   "keywords": [
     "widget",
     "framework"
@@ -21,8 +22,13 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.13.1",
     "eslint-plugin-compat": "^2.1.0",
+    "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
+    "mocha": "^4.0.1",
+    "mocha-phantomjs": "^4.1.0",
     "webpack": "^3.10.0"
   },
   "eslintConfig": {
@@ -35,7 +41,9 @@
       "node": true,
       "es6": true
     },
-    "plugins": ["compat"],
+    "plugins": [
+      "compat"
+    ],
     "rules": {
       "no-console": "off",
       "indent": [

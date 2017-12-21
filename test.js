@@ -5,15 +5,15 @@
 suite("LifeCycle");
 
 test("base", function() {
-    var x = new widget.LifeCycle();
+    var x = new widgetjs.LifeCycle();
     assert.equal(!!x.destroyed, false);
     x.destroy();
     assert.equal(x.destroyed, true);
 });
 
 test("parents", function() {
-    var x = new widget.LifeCycle();
-    var y = new widget.LifeCycle();
+    var x = new widgetjs.LifeCycle();
+    var y = new widgetjs.LifeCycle();
     y.parent = x;
     assert.equal(y.parent, x);
     assert.equal(x.children[0], y);
@@ -25,7 +25,7 @@ test("parents", function() {
 suite("EventDispatcher");
 
 test("base", function() {
-    var x = new widget.EventDispatcher();
+    var x = new widgetjs.EventDispatcher();
     var tmp = 0;
     var fct = function() {tmp = 1;};
     x.on("test", fct);
@@ -64,7 +64,7 @@ test("base", function() {
 suite("Widget");
 
 test("base", function() {
-    class Claz extends widget.Widget {
+    class Claz extends widgetjs.Widget {
         get tagName() { return "span"; }
         get className() { return "mytestspan"; }
         get attributes() {
@@ -128,8 +128,8 @@ test("base", function() {
 });
 
 test("appendEvents", function() {
-    var x = new widget.Widget();
-    var y = new widget.Widget();
+    var x = new widgetjs.Widget();
+    var y = new widgetjs.Widget();
     assert.strictEqual(x.__widgetAppended, false);
     assert.strictEqual(y.__widgetAppended, false);
     y.appendTo(x.el);
@@ -153,7 +153,7 @@ test("appendEvents", function() {
 });
 
 test("autoParent", function() {
-    class Claz extends widget.Widget {
+    class Claz extends widgetjs.Widget {
         constructor() {
             super();
             this.el.innerHTML = "<div></div>";
@@ -161,7 +161,7 @@ test("autoParent", function() {
     };
     var x = new Claz();
     assert.strictEqual(x.parent, null);
-    var y = new widget.Widget();
+    var y = new widgetjs.Widget();
     assert.strictEqual(y.parent, null);
 
     y.appendTo(x.el.querySelector("div"));
@@ -171,7 +171,7 @@ test("autoParent", function() {
     assert.strictEqual(x.parent, null);
     assert.strictEqual(y.parent, null);
 
-    var l = new widget.LifeCycle();
+    var l = new widgetjs.LifeCycle();
     y.parent = l;
     assert.strictEqual(y.parent, l);
     y.appendTo(x.el.querySelector("div"));
@@ -181,7 +181,7 @@ test("autoParent", function() {
 });
 
 test("domEventsSimple", function() {
-    var x = new widget.Widget();
+    var x = new widgetjs.Widget();
     x.appendTo($("body")[0]);
     var tmp = 0;
     x.on("dom:click", function(e) {
@@ -195,7 +195,7 @@ test("domEventsSimple", function() {
 });
 
 test("domEventsBubbling", function() {
-    class Claz extends widget.Widget {
+    class Claz extends widgetjs.Widget {
         constructor() {
             super();
             this.el.innerHTML = "<p><button></button></p>";
@@ -248,7 +248,7 @@ test("domEventsBubbling", function() {
 });
 
 test("render", function() {
-    class Claz extends widget.Widget {
+    class Claz extends widgetjs.Widget {
         render() {
             return "test";
         }
@@ -260,7 +260,7 @@ test("render", function() {
 $(function() {
     test("ready", function() {
         var tmp = 0;
-        widget.ready(function() { tmp = 1; });
+        widgetjs.ready(function() { tmp = 1; });
         assert.strictEqual(tmp, 1);
     });
 })
