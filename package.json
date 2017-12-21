@@ -16,11 +16,38 @@
     "dist/widget.bundle.js"
   ],
   "scripts": {
-    "test": "grunt test",
-    "build": "webpack"
+    "build": "webpack",
+    "eslint": "eslint widget.js"
   },
   "dependencies": {},
   "devDependencies": {
+    "eslint": "^4.13.1",
+    "eslint-plugin-compat": "^2.1.0",
     "webpack": "^3.10.0"
-  }
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "plugins": ["compat"],
+    "rules": {
+      "no-console": "off",
+      "indent": [
+        "error",
+        2
+      ],
+      "compat/compat": "error"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "IE >= 9",
+    "not OperaMini all"
+  ]
 }
