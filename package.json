@@ -1,8 +1,8 @@
 {
   "name": "widgetjs",
   "version": "1.2.3",
-  "description": "widget.js framework",
-  "main": "dist/widget.bundle.js",
+  "description": "widgetjs framework",
+  "main": "dist/widgetjs.bundle.js",
   "author": "Nicolas Vanhoren",
   "license": "MIT",
   "keywords": [
@@ -14,7 +14,7 @@
     "url": "git://github.com/nicolas-van/widget.js.git"
   },
   "files": [
-    "dist/widget.bundle.js"
+    "dist/widgetjs.bundle.js"
   ],
   "scripts": {
     "build": "webpack",
