@@ -2,7 +2,7 @@
   "name": "widgetjs",
   "version": "1.2.3",
   "description": "widget.js framework",
-  "main": "widget.js",
+  "main": "dist/widget.bundle.js",
   "author": "Nicolas Vanhoren",
   "keywords": [
     "widget",
@@ -13,22 +13,14 @@
     "url": "git://github.com/nicolas-van/widget.js.git"
   },
   "files": [
-    "widget.js"
+    "dist/widget.bundle.js"
   ],
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "build": "webpack"
   },
   "dependencies": {},
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
-    "chai": "^4.1.1",
-    "grunt": "^1.0.1",
-    "grunt-babel": "^7.0.0",
-    "grunt-contrib-jshint": "^1.0.0",
-    "grunt-mocha": "^1.0.4",
-    "jquery": "^3.2.1",
-    "lodash": "^4.13.1",
-    "mocha": "^3.5.3"
+    "webpack": "^3.10.0"
   }
 }
