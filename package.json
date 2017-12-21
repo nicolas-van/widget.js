@@ -19,18 +19,15 @@
   "scripts": {
     "build": "webpack",
     "lint": "eslint src/**.js",
-    "test": "npm run lint && npm run build && phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test.html"
+    "test": "npm run lint && npm run build && jest"
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "^4.1.2",
     "eslint": "^4.13.1",
     "eslint-plugin-compat": "^2.1.0",
+    "jest": "^22.0.3",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
-    "mocha": "^4.0.1",
-    "mocha-phantomjs-core": "^2.1.2",
-    "phantomjs-prebuilt": "^2.1.16",
     "webpack": "^3.10.0"
   },
   "eslintConfig": {
