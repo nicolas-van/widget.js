@@ -22,7 +22,7 @@ widgets.
 
     new MyWidget().appendTo(document.body);
 
-* Uses inheritance based on ES6 or helpers if you don't want to use ES6 classes.
+* Uses simple class inheritance.
 * Provides an events system separate from the DOM.
 * Provides life-cycle management for visual components.
 * Can be used with or without jQuery.
