@@ -59,40 +59,16 @@ export function createCustomEvent(type, canBubble, cancelable, detail) {
   }
 }
 
-export var Inheritable = function Inheritable() {};
-Inheritable.extend = function(protoProps) {
-  var parent = this;
-  var child;
-  if (protoProps && protoProps.hasOwnProperty('constructor')) {
-    child = protoProps.constructor;
-  } else {
-    child = function() { return parent.apply(this, arguments); };
-  }
-  for (var key in parent) {
-    if (! parent.hasOwnProperty(key))
-      continue;
-    child[key] = parent[key];
-  }
-  child.prototype = Object.create(parent.prototype);
-  for (var key2 in protoProps) {
-    var desc = Object.getOwnPropertyDescriptor(protoProps, key2);
-    Object.defineProperty(child.prototype, key2, desc);
-  }
-  child.prototype.constructor = child;
-  return child;
-};
-
-export var LifeCycle = Inheritable.extend({
-  constructor: function LifeCycle() {
-    Inheritable.apply(this, arguments);
+export class LifeCycle {
+  constructor() {
     this.__lifeCycle = true;
     this.__lifeCycleChildren = [];
     this.__lifeCycleParent = null;
     this.__lifeCycleDestroyed = false;
-  },
+  }
   get destroyed() {
     return this.__lifeCycleDestroyed;
-  },
+  }
   set parent(parent) {
     if (this.parent && this.parent.__lifeCycle) {
       this.parent.__lifeCycleChildren = this.parent.children.filter(function(el) {
@@ -103,45 +79,45 @@ export var LifeCycle = Inheritable.extend({
     if (parent && parent.__lifeCycle) {
       parent.__lifeCycleChildren.push(this);
     }
-  },
+  }
   get parent() {
     return this.__lifeCycleParent;
-  },
+  }
   get children() {
     return this.__lifeCycleChildren.slice();
-  },
-  destroy: function() {
+  }
+  destroy() {
     this.children.forEach(function(el) {
       el.destroy();
     });
     this.parent = undefined;
     this.__lifeCycleDestroyed = true;
-  },
-});
+  }
+}
 
-export var EventDispatcher = LifeCycle.extend({
-  constructor: function EventDispatcher() {
-    LifeCycle.call(this, arguments);
+export class EventDispatcher extends LifeCycle {
+  constructor() {
+    super();
     this._listeners = [];
-  },
-  addEventListener: function(type, callback) {
+  }
+  addEventListener(type, callback) {
     (this._listeners[type] = this._listeners[type] || []).push(callback);
-  },
-  removeEventListener: function(type, callback) {
+  }
+  removeEventListener(type, callback) {
     var stack = this._listeners[type] || [];
     for (var i = 0; i < stack.length; i++){
       if (stack[i] === callback) {
         stack.splice(i, 1);
       }
     }
-  },
-  dispatchEvent: function(event, overrideType) {
+  }
+  dispatchEvent(event, overrideType) {
     var stack = this._listeners[overrideType || event.type] || [];
     for(var i = 0, l = stack.length; i < l; i++) {
       stack[i].call(this, event);
     }
-  },
-  on: function(arg1, arg2) {
+  }
+  on(arg1, arg2) {
     var events = {};
     if (typeof arg1 === "string") {
       events[arg1] = arg2;
@@ -152,8 +128,8 @@ export var EventDispatcher = LifeCycle.extend({
       this.addEventListener(key, events[key]);
     }
     return this;
-  },
-  off: function(arg1, arg2) {
+  }
+  off(arg1, arg2) {
     var events = {};
     if (typeof arg1 === "string") {
       events[arg1] = arg2;
@@ -164,8 +140,8 @@ export var EventDispatcher = LifeCycle.extend({
       this.removeEventListener(key, events[key]);
     }
     return this;
-  },
-  trigger: function(arg1, arg2) {
+  }
+  trigger(arg1, arg2) {
     if (arg1 instanceof Event) {
       this.dispatchEvent(arg1);
     } else {
@@ -173,23 +149,23 @@ export var EventDispatcher = LifeCycle.extend({
       this.dispatchEvent(ev);
     }
     return this;
-  },
-  destroy: function() {
+  }
+  destroy() {
     this._listeners = [];
     LifeCycle.prototype.destroy.call(this);
-  },
-});
+  }
+}
 
 export function getWidget(element) {
   return element.__widgetWidget;
 }
 
-export var Widget = EventDispatcher.extend({
-  get tagName() { return 'div'; },
-  get className() { return ''; },
-  get attributes() { return {}; },
-  constructor: function Widget() {
-    EventDispatcher.call(this, arguments);
+export class Widget extends EventDispatcher {
+  get tagName() { return 'div'; }
+  get className() { return ''; }
+  get attributes() { return {}; }
+  constructor() {
+    super();
     this.__widgetAppended = false;
     this.__widgetExplicitParent = false;
     this.__widgetDomEvents = {};
@@ -200,53 +176,53 @@ export var Widget = EventDispatcher.extend({
     for (var key in this.attributes) this.el.setAttribute(key, this.attributes[key]);
     this.el.__widgetWidget = this;
     this.el.setAttribute("data-__widget", "");
-  },
+  }
   get el() {
     return this.__widgetElement;
-  },
-  destroy: function() {
+  }
+  destroy() {
     this.trigger("destroying");
     this.children.forEach(function(el) {
       el.destroy();
     });
     this.detach();
     EventDispatcher.prototype.destroy.call(this);
-  },
-  appendTo: function(target) {
+  }
+  appendTo(target) {
     target.appendChild(this.el);
     this.__checkAppended();
     return this;
-  },
-  prependTo: function(target) {
+  }
+  prependTo(target) {
     target.insertBefore(this.el, target.firstChild);
     this.__checkAppended();
     return this;
-  },
-  insertAfter: function(target) {
+  }
+  insertAfter(target) {
     if (! target.nextSibling)
       target.parentNode.appendChild(this.el);
     else
       target.parentNode.insertBefore(this.el, target.nextSibling);
     this.__checkAppended();
     return this;
-  },
-  insertBefore: function(target) {
+  }
+  insertBefore(target) {
     target.parentNode.insertBefore(this.el, target);
     this.__checkAppended();
     return this;
-  },
-  replace: function(target) {
+  }
+  replace(target) {
     target.parentNode.replaceChild(this.el, target);
     this.__checkAppended();
     return this;
-  },
-  detach: function() {
+  }
+  detach() {
     if (this.el.parentNode)
       this.el.parentNode.removeChild(this.el);
     this.__checkAppended(true);
     return this;
-  },
-  addEventListener: function(type, callback) {
+  }
+  addEventListener(type, callback) {
     EventDispatcher.prototype.addEventListener.call(this, type, callback);
     var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
     if (! res)
@@ -275,8 +251,8 @@ export var Widget = EventDispatcher.extend({
     } else {
       this.__widgetDomEvents[type][0] += 1;
     }
-  },
-  removeEventListener: function(type, callback) {
+  }
+  removeEventListener(type, callback) {
     EventDispatcher.prototype.removeEventListener.call(this, type, callback);
     var res = /^dom:(\w+)(?: (.*))?$/.exec(type);
     if (! res)
@@ -288,22 +264,22 @@ export var Widget = EventDispatcher.extend({
       this.el.removeEventListener(res[1], this.__widgetDomEvents[type][1]);
       delete this.__widgetDomEvents[type];
     }
-  },
+  }
   get appendedToDom() {
     return this.__widgetAppended;
-  },
+  }
   set parent(parent) {
     Object.getOwnPropertyDescriptor(LifeCycle.prototype, 'parent').set.call(this, parent);
     this.__widgetExplicitParent = true;
-  },
+  }
   get parent() {
     return Object.getOwnPropertyDescriptor(LifeCycle.prototype, 'parent').get.call(this);
-  },
-  resetParent: function() {
+  }
+  resetParent() {
     this.__widgetExplicitParent = false;
     this.__checkAppended();
-  },
-  __checkAppended: function(detached) {
+  }
+  __checkAppended(detached) {
     // check for parent change
     if (! this.__widgetExplicitParent) {
       var parent = this.el.parentNode;
@@ -327,8 +303,8 @@ export var Widget = EventDispatcher.extend({
       getWidget(el).__widgetAppended = inHtml;
       getWidget(el).trigger(inHtml ? "appendedToDom" : "removedFromDom");
     });
-  },
-});
+  }
+}
 
 export function ready(callback) {
   if (document.readyState === "complete") {

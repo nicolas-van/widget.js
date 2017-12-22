@@ -7,5 +7,13 @@ module.exports = {
     filename: 'widgetjs.bundle.js',
     library: 'widgetjs',
     libraryTarget: 'umd',
-  }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: 'babel-loader'
+      }
+    ]
+  },
 };

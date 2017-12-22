@@ -23,6 +23,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel-loader": "^7.1.2",
     "eslint": "^4.13.1",
     "eslint-plugin-compat": "^2.1.0",
     "jest": "^22.0.3",
@@ -50,6 +51,9 @@
       ],
       "compat/compat": "error"
     }
+  },
+  "babel": {
+    "presets": ["env"]
   },
   "browserslist": [
     "> 1%",
