@@ -24,6 +24,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
     "eslint": "^4.13.1",
     "eslint-plugin-compat": "^2.1.0",
     "jest": "^22.0.3",
@@ -53,7 +54,9 @@
     }
   },
   "babel": {
-    "presets": ["env"]
+    "presets": [
+      "env"
+    ]
   },
   "browserslist": [
     "> 1%",
