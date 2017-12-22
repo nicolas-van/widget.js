@@ -29,6 +29,7 @@
     "eslint-plugin-compat": "^2.1.0",
     "jest": "^22.0.3",
     "jquery": "^3.2.1",
+    "legado": "0.0.4",
     "webpack": "^3.10.0"
   },
   "eslintConfig": {

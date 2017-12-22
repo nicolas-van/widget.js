@@ -1,6 +1,7 @@
 
 var widgetjs = require('./dist/widgetjs.bundle.js');
 var $ = require('jquery');
+var legado = require('legado').default;
 
 describe("LifeCycle", () => {
   test("base", function() {
@@ -254,5 +255,27 @@ describe("ready", function() {
     return new Promise(function(res) {
       widgetjs.ready(res);
     })
+  });
+});
+
+describe("inheritance", function() {
+  test("base", function() {
+    var Claz = legado(widgetjs.Widget, {
+      get tagName() { return "span"; },
+      get className() { return "mytestspan"; },
+      get attributes() {
+        return {
+          "id": "testspan"
+        };
+      },
+      constructor() {
+        widgetjs.Widget.prototype.constructor.apply(this);
+        this.el.innerHTML = "test";
+      },
+    });
+    var x = new Claz();
+    x.appendTo(document.querySelector("body"));
+    var $el = $("#testspan");
+    expect($el.length).toBe(1);
   });
 });
