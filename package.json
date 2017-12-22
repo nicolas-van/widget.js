@@ -13,9 +13,6 @@
     "type": "git",
     "url": "git://github.com/nicolas-van/widget.js.git"
   },
-  "files": [
-    "dist/widgetjs.bundle.js"
-  ],
   "scripts": {
     "build": "webpack",
     "lint": "eslint src/**.js",
