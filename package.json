@@ -1,6 +1,6 @@
 {
   "name": "widgetjs",
-  "version": "1.2.3",
+  "version": "2.0.0-rc1",
   "description": "widgetjs framework",
   "main": "dist/widgetjs.bundle.js",
   "author": "Nicolas Vanhoren",
