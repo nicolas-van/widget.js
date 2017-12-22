@@ -38,6 +38,8 @@ To install:
 
     npm install widgetjs
 
+Or download it on https://unpkg.com/widgetjs/
+
 License: MIT
 
 Supported browsers: All major browsers as well as IE down to IE9.
