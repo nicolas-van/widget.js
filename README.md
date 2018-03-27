@@ -2,6 +2,8 @@
 widgetjs
 ========
 
+[![Build Status](https://travis-ci.org/nicolas-van/widget.js.svg?branch=master)](https://travis-ci.org/nicolas-van/widget.js)
+
 A lightweight JavaScript component framework
 --------------------------------------------
 
