@@ -2,7 +2,7 @@
 widgetjs
 ========
 
-[![Build Status](https://travis-ci.org/nicolas-van/widget.js.svg?branch=master)](https://travis-ci.org/nicolas-van/widget.js)
+[![Build Status](https://travis-ci.org/nicolas-van/widget.js.svg?branch=master)](https://travis-ci.org/nicolas-van/widget.js) [![npm](https://img.shields.io/npm/v/widgetjs.svg)](https://www.npmjs.com/package/widgetjs)
 
 A lightweight JavaScript component framework
 --------------------------------------------
